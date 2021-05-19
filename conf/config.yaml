@@ -59,7 +59,7 @@ plateau:
 # Models
 model: swave # either demucs or dwave
 swave:
-  N: 128
+  N: 64
   L: 8
   H: 128
   R: 6
