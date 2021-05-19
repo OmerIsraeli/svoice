@@ -28,6 +28,7 @@ class MulCatBlock(nn.Module):
 
         self.rnn = nn.LSTM(input_size, hidden_size, 1, dropout=dropout,
                            batch_first=True, bidirectional=bidirectional)
+
         self.rnn_proj = nn.Linear(hidden_size * self.num_direction, input_size)
 
         self.gate_rnn = nn.LSTM(input_size, hidden_size, num_layers=1,
@@ -126,6 +127,8 @@ class DPMulCat(nn.Module):
                 output = output + col_output
             else:
                 output += col_output
+
+            # insert smthn
 
             output_i = self.output(output)
 
