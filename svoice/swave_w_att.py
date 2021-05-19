@@ -154,6 +154,8 @@ class Separator(nn.Module):
         self.rnn_model = DPMulCat(self.feature_dim, self.hidden_dim,
                                   self.feature_dim, self.num_spk, num_layers=layer, bidirectional=bidirectional, input_normalize=input_normalize)
 
+        self.h5pyLoader = h5py.File(path, 'r')
+        self.ibm = self.h5pyLoader['ibm']  # ideal binary mask, shape: (num_sample, time*freq, num_spk)
     # ======================================= #
     # The following code block was borrowed and modified from https://github.com/yluo42/TAC
     # ================ BEGIN ================ #
@@ -222,31 +224,6 @@ class Separator(nn.Module):
             output_ii = self.merge_chuncks(
                 output_all[ii], enc_rest)
             output_all_wav.append(output_ii)
-
-        # ****************************
-        # *  from here : ATTRACTROS  *
-        # ****************************
-
-        # TODO: flat the tensor to KxFT from NxKxR
-        V = self.FC(output_all[-1])  # B*T, F*K
-        V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
-
-        # calculate the ideal attractors
-        # first calculate the source assignment matrix Y
-        Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
-
-        # attractors are the weighted average of the embeddings
-        # calculated by V and Y
-        V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
-        sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
-        attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
-
-        # calculate the distance bewteen embeddings and attractors
-        # and generate the masks
-        dist = V.bmm(attractor)  # B, T*F, nspk
-        mask = F.softmax(dist, dim=2)  # B, T*F, nspk
-        # TODO: comment this when done and uncomment the new return
-
         return output_all_wav
         # reutrn output_all, mask, hidden
 
@@ -288,10 +265,34 @@ class SWave(nn.Module):
         for ii in range(len(output_all)):
             output_ii = output_all[ii].view(
                 mixture.shape[0], self.C, self.N, mixture_w.shape[2])
+            # ****************************
+            # *  from here : ATTRACTROS  *
+            # ****************************
+
+            # TODO: flat the tensor to KxFT from NxKxR
+            V = self.FC(output_ii)  # B*T, F*K
+            V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
+
+            # calculate the ideal attractors
+            # first calculate the source assignment matrix Y
+            Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
+
+            # attractors are the weighted average of the embeddings
+            # calculated by V and Y
+            V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
+            sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
+            attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
+
+            # calculate the distance bewteen embeddings and attractors
+            # and generate the masks
+            dist = V.bmm(attractor)  # B, T*F, nspk
+            mask = F.softmax(dist, dim=2)  # B, T*F, nspk
+            # TODO: comment this when done and uncomment the new return
             output_ii = self.decoder(output_ii)
 
             T_est = output_ii.size(-1)
             output_ii = F.pad(output_ii, (0, T_mix - T_est))
+
             outputs.append(output_ii)
         return torch.stack(outputs)
 
