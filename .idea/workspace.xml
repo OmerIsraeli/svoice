@@ -20,7 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1ff54568-5193-4de9-816f-89884a40aaa8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DANet" beforeDir="false" afterPath="$PROJECT_DIR$/DANet" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DANet/DANet/DANet_train.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/DANet/DANet/DANet_train.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/svoice/models/swave.py" beforeDir="false" afterPath="$PROJECT_DIR$/svoice/models/swave.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -29,10 +31,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/DANet" />
   </component>
   <component name="JupyterTrust" id="8a5206a7-c77b-468f-8979-8d2025315e88" />
   <component name="ProjectId" id="1sOwYKsHmtzN6QMHKO9Wi5XIX86" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -40,7 +43,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/svoice/models" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -50,6 +53,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\israe\PycharmProjects\svoice\svoice" />
       <recent name="C:\Users\israe\PycharmProjects\svoice" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
@@ -66,7 +70,8 @@
       <option name="presentableId" value="Default" />
       <updated>1620756990419</updated>
       <workItem from="1620756991514" duration="6225000" />
-      <workItem from="1621406188428" duration="9165000" />
+      <workItem from="1621406188428" duration="9578000" />
+      <workItem from="1621449960858" duration="1734000" />
     </task>
     <servers />
   </component>
@@ -83,6 +88,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1620757056303">
