@@ -128,6 +128,8 @@ class DPMulCat(nn.Module):
                 output += col_output
 
             output_i = self.output(output)
+
+
             if self.training or i == (self.num_layers - 1):
                 output_all.append(output_i)
         return output_all
