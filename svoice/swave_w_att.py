@@ -13,6 +13,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
+from DANet.torch_utils import FCLayer
 from svoice.utils import overlap_and_add
 from svoice.utils import capture_init
 
@@ -95,6 +96,7 @@ class DPMulCat(nn.Module):
                 self.rows_normalization.append(ByPass())
                 self.cols_normalization.append(ByPass())
 
+        # self.fully_connected = FCLayer(input_size, output_size, "tanh")
         self.output = nn.Sequential(
             nn.PReLU(), nn.Conv2d(input_size, output_size * num_spk, 1))
 
@@ -131,34 +133,8 @@ class DPMulCat(nn.Module):
             output_i = self.output(output)
             if self.training or i == (self.num_layers - 1):
                 output_all.append(output_i)
-        # ****************************
-        # *  from here : ATTRACTROS  *
-        # ****************************
 
-        # TODO: flat the tensor to KxFT from NxKxR
-        V = self.FC(output_all[-1])  # B*T, F*K
-        V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
-
-        # calculate the ideal attractors
-        # first calculate the source assignment matrix Y
-        Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
-
-        # attractors are the weighted average of the embeddings
-        # calculated by V and Y
-        V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
-        sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
-        attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
-
-        # calculate the distance bewteen embeddings and attractors
-        # and generate the masks
-        dist = V.bmm(attractor)  # B, T*F, nspk
-        mask = F.softmax(dist, dim=2)  # B, T*F, nspk
-        # TODO: comment this when done and uncomment the new return
         return output_all
-        #reutrn output_all, mask, hidden
-
-
-
 
 class Separator(nn.Module):
     def __init__(self, input_dim, feature_dim, hidden_dim, output_dim, num_spk=2,
@@ -239,14 +215,40 @@ class Separator(nn.Module):
             input, self.segment_size)
         # separate
         output_all = self.rnn_model(enc_segments)
-        
+
         # merge back audio files
         output_all_wav = []
         for ii in range(len(output_all)):
             output_ii = self.merge_chuncks(
                 output_all[ii], enc_rest)
             output_all_wav.append(output_ii)
+
+        # ****************************
+        # *  from here : ATTRACTROS  *
+        # ****************************
+
+        # TODO: flat the tensor to KxFT from NxKxR
+        V = self.FC(output_all[-1])  # B*T, F*K
+        V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
+
+        # calculate the ideal attractors
+        # first calculate the source assignment matrix Y
+        Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
+
+        # attractors are the weighted average of the embeddings
+        # calculated by V and Y
+        V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
+        sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
+        attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
+
+        # calculate the distance bewteen embeddings and attractors
+        # and generate the masks
+        dist = V.bmm(attractor)  # B, T*F, nspk
+        mask = F.softmax(dist, dim=2)  # B, T*F, nspk
+        # TODO: comment this when done and uncomment the new return
+
         return output_all_wav
+        # reutrn output_all, mask, hidden
 
 
 class SWave(nn.Module):
