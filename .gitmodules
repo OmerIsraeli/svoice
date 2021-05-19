@@ -1,0 +1,3 @@
+[submodule "DANet"]
+	path = DANet
+	url = https://github.com/OmerIsraeli/DANet.git
