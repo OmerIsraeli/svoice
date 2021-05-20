@@ -471,6 +471,11 @@ class SWave(nn.Module):
         # To use this view time as part of a batch
         self.FC = FCLayer(self.C, self.C)
 
+        self.h5pyLoader = h5py.File(path, 'r')
+        self.ibm = self.h5pyLoader['ibm']
+        self.weight = self.h5pyLoader['weight']
+
+
         # init
         for p in self.parameters():
             if p.dim() > 1:
@@ -484,6 +489,7 @@ class SWave(nn.Module):
         T_mix = mixture.size(-1)
         # generate wav after each RNN block and optimize the loss
         outputs = []
+        masks = []
         for ii in range(len(output_all)):
             output_ii = output_all[ii].view(
                 mixture.shape[0], self.C, self.N, mixture_w.shape[2])
@@ -501,13 +507,20 @@ class SWave(nn.Module):
             # TODO: take output_ii and insert speaker int Batch to create 2D tensor
             V = self.FC(output_ii)  # B*T, F*K
 
-            # TODO add all relevant varaibles
+
+            #1. IBM,weight-Done
+            #2.seq_len -Done
+            #3. ??
             # TODO edit loss
-            V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
+            time_t = output_ii.size(2)
+            # TODO : find F,K.
+            F=
+            K=
+            V = V.view(-1, time_t * F, K)  # B, T*F, K
 
             # calculate the ideal attractors
             # first calculate the source assignment matrix Y
-            Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
+            Y = self.ibm * self.weight.expand_as(self.ibm)  # B, T*F, nspk
 
             # attractors are the weighted average of the embeddings
             # calculated by V and Y
@@ -525,8 +538,8 @@ class SWave(nn.Module):
             # ****************************
 
             outputs.append(output_ii)
-
-        return torch.stack(outputs)
+            masks.append(output_ii)
+        return torch.stack(outputs), masks
 
 
 class Encoder(nn.Module):
