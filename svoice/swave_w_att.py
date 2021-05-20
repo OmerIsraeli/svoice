@@ -499,26 +499,31 @@ class SWave(nn.Module):
             # ****************************
 
             # TODO: take output_ii and insert speaker int Batch to create 2D tensor
+
+            # This should make output_ii into B*T, C
+            output_ii = output_ii.permute(0, 2, 1).view(output_ii.shape[0] * T_mix, self.C)
+            print(output_ii.shape)
+            raise Exception()
             V = self.FC(output_ii)  # B*T, F*K
 
             # TODO add all relevant varaibles
             # TODO edit loss
-            V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
-
-            # calculate the ideal attractors
-            # first calculate the source assignment matrix Y
-            Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
-
-            # attractors are the weighted average of the embeddings
-            # calculated by V and Y
-            V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
-            sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
-            attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
-
-            # calculate the distance bewteen embeddings and attractors
-            # and generate the masks
-            dist = V.bmm(attractor)  # B, T*F, nspk
-            mask = F.softmax(dist, dim=2)  # B, T*F, nspk
+            # V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
+            #
+            # # calculate the ideal attractors
+            # # first calculate the source assignment matrix Y
+            # Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
+            #
+            # # attractors are the weighted average of the embeddings
+            # # calculated by V and Y
+            # V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
+            # sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
+            # attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
+            #
+            # # calculate the distance bewteen embeddings and attractors
+            # # and generate the masks
+            # dist = V.bmm(attractor)  # B, T*F, nspk
+            # mask = F.softmax(dist, dim=2)  # B, T*F, nspk
 
             # ****************************
             # *  till here : ATTRACTROS  *
@@ -554,95 +559,5 @@ class Decoder(nn.Module):
         # now est_source is Batch * Speakers * T' * N
         est_source = overlap_and_add(est_source, self.L // 2)
         # now est_source is Batch * Speakers * T
-        print(est_source.shape)
-        raise Exception()
-
-        return est_source
-
-        output_all_wav = []
-        for ii in range(len(output_all)):
-            print(output_all[ii].shape)
-            # output_all[ii] = Batch * N*C * K * R
-            output_ii = self.merge_chuncks(
-                output_all[ii], enc_rest)
-            # output_ii = batch * N*C * T'
-            # print(output_ii.shape)
-            output_all_wav.append(output_ii)
-        return output_all_wav
-
-
-class SWave(nn.Module):
-    @capture_init
-    def __init__(self, N, L, H, R, C, sr, segment, input_normalize):
-        super(SWave, self).__init__()
-        # hyper-parameter
-        self.N, self.L, self.H, self.R, self.C, self.sr, self.segment = N, L, H, R, C, sr, segment
-        self.input_normalize = input_normalize
-        self.context_len = 2 * self.sr / 1000
-        self.context = int(self.sr * self.context_len / 1000)
-        self.layer = self.R
-        self.filter_dim = self.context * 2 + 1
-        self.num_spk = self.C
-        # similar to dprnn paper, setting chancksize to sqrt(2*L)
-        self.segment_size = int(
-            np.sqrt(2 * self.sr * self.segment / (self.L / 2)))
-
-        # model sub-networks
-        self.encoder = Encoder(L, N)
-        self.decoder = Decoder(L)
-        self.separator = Separator(self.filter_dim + self.N, self.N, self.H,
-                                   self.filter_dim, self.num_spk, self.layer, self.segment_size, self.input_normalize)
-        # init
-        for p in self.parameters():
-            if p.dim() > 1:
-                nn.init.xavier_normal_(p)
-
-    def forward(self, mixture):
-        mixture_w = self.encoder(mixture)
-        output_all = self.separator(mixture_w)
-
-        # fix time dimension, might change due to convolution operations
-        T_mix = mixture.size(-1)
-        # generate wav after each RNN block and optimize the loss
-        outputs = []
-        for ii in range(len(output_all)):
-            output_ii = output_all[ii].view(
-                mixture.shape[0], self.C, self.N, mixture_w.shape[2])
-            # output_ii = Batch * Speaker * N * T'
-            output_ii = self.decoder(output_ii)
-
-            T_est = output_ii.size(-1)
-            output_ii = F.pad(output_ii, (0, T_mix - T_est))
-            outputs.append(output_ii)
-        return torch.stack(outputs)
-
-
-class Encoder(nn.Module):
-    def __init__(self, L, N):
-        super(Encoder, self).__init__()
-        self.L, self.N = L, N
-        # setting 50% overlap
-        self.conv = nn.Conv1d(
-            1, N, kernel_size=L, stride=L // 2, bias=False)
-
-    def forward(self, mixture):
-        mixture = torch.unsqueeze(mixture, 1)
-        mixture_w = F.relu(self.conv(mixture))
-        return mixture_w
-
-
-class Decoder(nn.Module):
-    def __init__(self, L):
-        super(Decoder, self).__init__()
-        self.L = L
-
-    def forward(self, est_source):
-        est_source = torch.transpose(est_source, 2, 3)
-        est_source = nn.AvgPool2d((1, self.L))(est_source)
-        # now est_source is Batch * Speakers * T' * N
-        est_source = overlap_and_add(est_source, self.L // 2)
-        # now est_source is Batch * Speakers * T
-        print(est_source.shape)
-        raise Exception()
 
         return est_source
