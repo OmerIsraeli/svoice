@@ -1,3 +1,6 @@
 [submodule "DANet"]
 	path = DANet
 	url = https://github.com/OmerIsraeli/DANet.git
+[submodule "IBM-Separation"]
+	path = IBM-Separation
+	url = https://github.com/OmerIsraeli/IBM-Separation.git
