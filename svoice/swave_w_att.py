@@ -515,7 +515,7 @@ class SWave(nn.Module):
             #3. ??
             # TODO edit loss
             time_t = output_ii.size(2)
-            V = V.view(-1, time_t, C)  # B, T, K
+            V = V.view(-1, time_t, self.C)  # B, T, K
 
             # calculate the ideal attractors
             # first calculate the source assignment matrix Y
@@ -531,6 +531,10 @@ class SWave(nn.Module):
             # and generate the masks
             dist = V.bmm(attractor)  # B, T*F, nspk
             mask = F.softmax(dist, dim=2)  # B, T*F, nspk
+            mask = mask.permute(0, 2, 1)
+
+            # This is B, T
+            source_seperaeted = mixture[:, :, None] * mask
 
             # ****************************
             # *  till here : ATTRACTROS  *

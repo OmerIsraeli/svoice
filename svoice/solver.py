@@ -8,22 +8,17 @@
 
 import json
 import logging
-from pathlib import Path
-import os
 import time
+from pathlib import Path
 
-import numpy as np
 import torch
-import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
 
 from . import distrib
-from .separate import separate
 from .evaluate import evaluate
 from .models.sisnr_loss import cal_loss
-from .models.swave import SWave
+from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
-
 
 logger = logging.getLogger(__name__)
 
@@ -193,6 +188,7 @@ class Solver(object):
         for i, data in enumerate(logprog):
             mixture, lengths, sources = [x.to(self.device) for x in data]
             estimate_source = self.dmodel(mixture)
+            # TODO change the above
 
             # only eval last layer
             if cross_valid:
@@ -203,7 +199,8 @@ class Solver(object):
             # apply a loss function after each layer
             with torch.autograd.set_detect_anomaly(True):
                 for c_idx, est_src in enumerate(estimate_source):
-                    coeff = ((c_idx+1)*(1/cnt))
+
+                    coeff = ((c_idx + 1) * (1 / cnt))
                     loss_i = 0
                     # SI-SNR loss
                     sisnr_loss, snr, est_src, reorder_est_src = cal_loss(
