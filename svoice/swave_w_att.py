@@ -471,6 +471,7 @@ class SWave(nn.Module):
         # To use this view time as part of a batch
         self.FC = FCLayer(self.C, self.C)
 
+        # TODO what is this path ?
         self.h5pyLoader = h5py.File(path, 'r')
         self.ibm = self.h5pyLoader['ibm']
         self.weight = self.h5pyLoader['weight']
@@ -504,13 +505,9 @@ class SWave(nn.Module):
             # *  from here : ATTRACTROS  *
             # ****************************
 
-            # TODO: take output_ii and insert speaker int Batch to create 2D tensor
-
             # This should make output_ii into B*T, C
-            output_ii = output_ii.permute(0, 2, 1).view(output_ii.shape[0] * T_mix, self.C)
-            print(output_ii.shape)
-            raise Exception()
-            V = self.FC(output_ii)  # B*T, F*K
+            output_ii = output_ii.permute(0, 2, 1).reshape(-1, self.C)
+            V = self.FC(output_ii)  # B*T, C
 
 
             #1. IBM,weight-Done
@@ -518,10 +515,7 @@ class SWave(nn.Module):
             #3. ??
             # TODO edit loss
             time_t = output_ii.size(2)
-            # TODO : find F,K.
-            F=
-            K=
-            V = V.view(-1, time_t * F, K)  # B, T*F, K
+            V = V.view(-1, time_t, C)  # B, T, K
 
             # calculate the ideal attractors
             # first calculate the source assignment matrix Y
@@ -537,30 +531,14 @@ class SWave(nn.Module):
             # and generate the masks
             dist = V.bmm(attractor)  # B, T*F, nspk
             mask = F.softmax(dist, dim=2)  # B, T*F, nspk
-            # V = V.view(-1, seq_len * self.infeat_dim, self.outfeat_dim)  # B, T*F, K
-            #
-            # # calculate the ideal attractors
-            # # first calculate the source assignment matrix Y
-            # Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
-            #
-            # # attractors are the weighted average of the embeddings
-            # # calculated by V and Y
-            # V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
-            # sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
-            # attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
-            #
-            # # calculate the distance bewteen embeddings and attractors
-            # # and generate the masks
-            # dist = V.bmm(attractor)  # B, T*F, nspk
-            # mask = F.softmax(dist, dim=2)  # B, T*F, nspk
-
 
             # ****************************
             # *  till here : ATTRACTROS  *
             # ****************************
 
             outputs.append(output_ii)
-            masks.append(output_ii)
+            masks.append(mask)
+
         return torch.stack(outputs), masks
 
 
