@@ -470,11 +470,9 @@ class SWave(nn.Module):
 
         # To use this view time as part of a batch
         self.FC = FCLayer(self.C, self.C)
+        #TODO : choose epsilon
+        self.eps = 10 ** (-6)
 
-        # TODO what is this path ?
-        self.h5pyLoader = h5py.File(path, 'r')
-        self.ibm = self.h5pyLoader['ibm']
-        self.weight = self.h5pyLoader['weight']
 
 
         # init
@@ -482,7 +480,8 @@ class SWave(nn.Module):
             if p.dim() > 1:
                 nn.init.xavier_normal_(p)
 
-    def forward(self, mixture):
+    def forward(self, mixture,ibm=None,weights=None):
+
         mixture_w = self.encoder(mixture)
         output_all = self.separator(mixture_w)
 
@@ -508,23 +507,19 @@ class SWave(nn.Module):
             output_ii = output_ii.permute(0, 2, 1).reshape(-1, self.C)
             V = self.FC(output_ii)  # B*T, C
 
-
-            #1. IBM,weight-Done
-            #2.seq_len -Done
-            #3. ??
-            # TODO edit loss
             time_t = output_ii.size(2)
             V = V.view(-1, time_t, self.C)  # B, T, K
 
             # calculate the ideal attractors
             # first calculate the source assignment matrix Y
-            Y = self.ibm * self.weight.expand_as(self.ibm)  # B, T*F, nspk
+            if ibm != None or weights!= None:
+                Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
 
-            # attractors are the weighted average of the embeddings
-            # calculated by V and Y
-            V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
-            sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
-            attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
+                # attractors are the weighted average of the embeddings
+                # calculated by V and Y
+                V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
+                sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
+                attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
 
             # calculate the distance bewteen embeddings and attractors
             # and generate the masks

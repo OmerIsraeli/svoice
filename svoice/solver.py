@@ -11,6 +11,7 @@ import logging
 import time
 from pathlib import Path
 
+
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
 
@@ -19,6 +20,7 @@ from .evaluate import evaluate
 from .models.sisnr_loss import cal_loss
 from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
+from .IBM
 
 logger = logging.getLogger(__name__)
 
@@ -187,7 +189,8 @@ class Solver(object):
                               updates=self.num_prints, name=name)
         for i, data in enumerate(logprog):
             mixture, lengths, sources = [x.to(self.device) for x in data]
-            estimate_source = self.dmodel(mixture)
+            ibm =
+            estimate_source = self.dmodel(mixture,ibm,weights)
             # TODO change the above
 
             # only eval last layer
