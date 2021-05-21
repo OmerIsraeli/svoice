@@ -14,10 +14,10 @@ Created on Wed Aug  8 20:26:54 2018
 # %% Spectrograms
 
 from scipy import signal
-import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import numpy as np
 from math import ceil
+import tensorflow as tf
 
 # %% Import 2 wav files
 
@@ -31,9 +31,13 @@ file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV";
 
 # %% Play wav file
 
-import winsound
-
-winsound.PlaySound(file1, winsound.SND_FILENAME | winsound.SND_ASYNC)
+#
+# import winsound
+#
+# winsound.PlaySound(file1, winsound.SND_FILENAME | winsound.SND_ASYNC)
+#
+# # winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
+#
 
 
 #
@@ -175,6 +179,7 @@ winsound.PlaySound(file1, winsound.SND_FILENAME | winsound.SND_ASYNC)
 
 
 def ibm_generator(samples1, samples2, mixture):
+
     # maxlength = max(len(samples1), len(samples1))
     #
     # # Pad each signal to the length of the longest signal
@@ -198,21 +203,25 @@ def ibm_generator(samples1, samples2, mixture):
     # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
 
     # Choose sample to create mask for
-    Zsample = samples2
+    # Zsample = samples2
     # sample = samples2
 
     # Calculate signal to noise ratio of clean signal versus combined signal
-    snr = np.divide(np.real(np.abs(Zsample)), np.real(np.abs(mixture)))
+    snr1 = np.divide(np.real(np.abs(samples1.cpu())), np.real(np.abs(mixture.cpu())))
+    snr2 = np.divide(np.real(np.abs(samples2.cpu())), np.real(np.abs(mixture.cpu())))
     # round snr to 0 or 1 to create binary mask
-    mask = np.around(snr, 0)
+    mask1 = np.around(snr1, 0)
+    mask2 = np.around(snr2, 0)
 
     # convert all nan in mask to 1 (it shouldnt matter if this is 0 or 1)
-    mask[np.isnan(mask)] = 1
+    mask1[np.isnan(mask1)] = 1
+    mask2[np.isnan(mask1)] = 1
 
     # replace all values over 1 with 1
-    mask[mask > 1] = 1
+    mask1[mask1 > 1] = 1
+    mask2[mask2 > 1] = 1
 
-    return mask
+    return tf.conver_to_tensor(np.array([mask1,mask2]))
 
 
 def weight_generator(samples1, samples2, mixture, rho):

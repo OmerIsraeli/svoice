@@ -6,16 +6,9 @@
 
 # Authors: Eliya Nachmani (enk100), Yossi Adi (adiyoss), Lior Wolf
 
-import sys
-import numpy as np
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
 
 from DANet.torch_utils import FCLayer
-from ..utils import overlap_and_add
-from ..utils import capture_init
 
 
 class MulCatBlock(nn.Module):
@@ -217,6 +210,8 @@ class Separator(nn.Module):
         output_all = self.rnn_model(enc_segments)
 
         # merge back audio files# Copyright (c) Facebook, Inc. and its affiliates.
+
+
 # All rights reserved.
 #
 # This source code is licensed under the license found in the
@@ -224,7 +219,6 @@ class Separator(nn.Module):
 
 # Authors: Eliya Nachmani (enk100), Yossi Adi (adiyoss), Lior Wolf
 
-import sys
 import numpy as np
 import torch
 import torch.nn as nn
@@ -470,17 +464,15 @@ class SWave(nn.Module):
 
         # To use this view time as part of a batch
         self.FC = FCLayer(self.C, self.C)
-        #TODO : choose epsilon
+        # TODO : choose epsilon
         self.eps = 10 ** (-6)
-
-
 
         # init
         for p in self.parameters():
             if p.dim() > 1:
                 nn.init.xavier_normal_(p)
 
-    def forward(self, mixture,ibm=None,weights=None):
+    def forward(self, mixture, ibm=None, weights=None):
 
         mixture_w = self.encoder(mixture)
         output_all = self.separator(mixture_w)
@@ -512,14 +504,16 @@ class SWave(nn.Module):
 
             # calculate the ideal attractors
             # first calculate the source assignment matrix Y
-            if ibm != None or weights!= None:
-                Y = ibm * weight.expand_as(ibm)  # B, T*F, nspk
+            if ibm is not None or weights is not None:
+                Y = ibm * weights.expand_as(ibm)  # B, T*F, nspk
 
                 # attractors are the weighted average of the embeddings
                 # calculated by V and Y
                 V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
                 sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
                 attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
+            else:
+                raise Exception("what")
 
             # calculate the distance bewteen embeddings and attractors
             # and generate the masks
