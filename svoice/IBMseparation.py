@@ -14,7 +14,6 @@ Created on Wed Aug  8 20:26:54 2018
 #%% Spectrograms
 
 from scipy import signal
-import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import numpy as np
 from math import ceil
@@ -31,9 +30,7 @@ file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV";
 
 #%% Play wav file
 
-import winsound
-
-winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
+# winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
 
 
 #
@@ -174,7 +171,7 @@ winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
 # winsound.PlaySound(filepath + '/recovered.wav', winsound.SND_FILENAME|winsound.SND_ASYNC)
 
 
-def ibm_generator(samples1 , samples2, mixture):
+def ibm_generator(samples1, samples2, mixture):
 
     # maxlength = max(len(samples1), len(samples1))
     #
