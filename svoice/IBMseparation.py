@@ -5,13 +5,13 @@ Created on Wed Aug  8 20:26:54 2018
 @author: simon.suthers
 """
 
-#Scipy inverse short term fourier transform
+# Scipy inverse short term fourier transform
 
-#Sources:
-#http://scipy.github.io/devdocs/generated/scipy.signal.stft.html
-#http://www.cs.northwestern.edu/~pardo/courses/eecs352/lectures/MPM14-Time-Frequency-Masking.pdf
+# Sources:
+# http://scipy.github.io/devdocs/generated/scipy.signal.stft.html
+# http://www.cs.northwestern.edu/~pardo/courses/eecs352/lectures/MPM14-Time-Frequency-Masking.pdf
 
-#%% Spectrograms
+# %% Spectrograms
 
 from scipy import signal
 import matplotlib.pyplot as plt
@@ -19,21 +19,21 @@ from scipy.io import wavfile
 import numpy as np
 from math import ceil
 
-#%% Import 2 wav files
+# %% Import 2 wav files
 
 filepath = "C:/Users/User/OneDrive - City, University of London/Dissertation/TIMIT_WAV/"
-#filepath = "C:/Users/Simon.Suthers/OneDrive - City, University of London/Dissertation/TIMIT_WAV"
+# filepath = "C:/Users/Simon.Suthers/OneDrive - City, University of London/Dissertation/TIMIT_WAV"
 
 picturepath = "C:/Users/User/OneDrive - City, University of London/Dissertation/Code/"
 
 file1 = filepath + "/TRAIN/DR1/FDAW0/SA1.WAV";
 file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV";
 
-#%% Play wav file
+# %% Play wav file
 
 import winsound
 
-winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
+winsound.PlaySound(file1, winsound.SND_FILENAME | winsound.SND_ASYNC)
 
 
 #
@@ -174,8 +174,7 @@ winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
 # winsound.PlaySound(filepath + '/recovered.wav', winsound.SND_FILENAME|winsound.SND_ASYNC)
 
 
-def ibm_generator(samples1 , samples2, mixture):
-
+def ibm_generator(samples1, samples2, mixture):
     # maxlength = max(len(samples1), len(samples1))
     #
     # # Pad each signal to the length of the longest signal
@@ -216,8 +215,7 @@ def ibm_generator(samples1 , samples2, mixture):
     return mask
 
 
-def weight_generator(samples1 , samples2, mixture,rho):
-
+def weight_generator(samples1, samples2, mixture, rho):
     # maxlength = max(len(samples1), len(samples1))
     #
     # # Pad each signal to the length of the longest signal
@@ -239,14 +237,14 @@ def weight_generator(samples1 , samples2, mixture,rho):
     #
     # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
 
-
     weights = mixture
 
     weights[np.isnan(weights)] = 1
-    weights[mixture > rho]=1
+    weights[mixture > rho] = 1
     weights[mixture <= rho] = 0
 
     return weights
+
 
 # %% Join 2 wav files together
 # Make sure all 3 wav files are the same length
