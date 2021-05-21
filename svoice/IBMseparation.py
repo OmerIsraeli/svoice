@@ -206,23 +206,21 @@ def ibm_generator(samples1, samples2, mixture):
     # sample = samples2
 
     # Calculate signal to noise ratio of clean signal versus combined signal
-    snr1 = np.divide(np.abs(samples1.cpu()), np.abs(mixture.cpu()))
-    snr2 = np.divide(np.abs(samples2.cpu()), np.abs(mixture.cpu()))
-    snr1[np.isnan(snr1)] = 1.0
-    snr2[np.isnan(snr2)] = 1.0
+    snr1 = torch.div(torch.abs(samples1), torch.abs(mixture))
+    snr2 = torch.div(torch.abs(samples2), torch.abs(mixture))
+    snr1[snr1 != snr1] = 0.0
+    snr2[snr2 != snr2] = 0.0
+
     # round snr to 0 or 1 to create binary mask
-    mask1 = np.around(snr1, 0)
-    mask2 = np.around(snr2, 0)
+    mask1 = torch.round(snr1)
+    mask2 = torch.round(snr2)
 
-    # convert all nan in mask to 1 (it shouldnt matter if this is 0 or 1)
-    mask1[np.isnan(mask1)] = 1.0
-    mask2[np.isnan(mask1)] = 1.0
+    one = torch.ones_like(snr1)
 
-    # replace all values over 1 with 1
-    mask1[mask1 > 1] = 1.0
-    mask2[mask2 > 1] = 1.0
+    mask1 = torch.where(mask1 > 1, one, mask1)
+    mask2 = torch.where(mask2 > 1, one, mask2)
 
-    return torch.from_numpy(np.stack([mask1, mask2]))
+    return torch.stack([mask1, mask2])
 
 
 def weight_generator(samples1, samples2, mixture, rho):
@@ -247,11 +245,12 @@ def weight_generator(samples1, samples2, mixture, rho):
     #
     # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
 
-    weights = mixture.cpu()
+    weights = mixture.clone()
 
-    weights[np.isnan(weights)] = 1.0
-    weights[mixture > rho] = 1.0
-    weights[mixture <= rho] = 0.0
+    zero = torch.zeros_like(weights)
+    one = torch.ones_like(weights)
+
+    weights = torch.where(weights > rho, one, zero)
 
     return weights
 

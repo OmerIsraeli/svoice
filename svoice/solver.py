@@ -159,7 +159,8 @@ class Solver(object):
 
                 # separate some samples
                 logger.info('Separate and save samples...')
-                separate(self.args, self.model, self.samples_dir)
+                # TODO after proper seperation added uncomment line below
+                # separate(self.args, self.model, self.samples_dir)
 
             self.history.append(metrics)
             info = " | ".join(
