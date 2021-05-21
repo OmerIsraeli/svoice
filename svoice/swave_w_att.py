@@ -490,7 +490,6 @@ class SWave(nn.Module):
         T_mix = mixture.size(-1)
         # generate wav after each RNN block and optimize the loss
         outputs = []
-        masks = []
         for ii in range(len(output_all)):
             output_ii = output_all[ii].view(
                 mixture.shape[0], self.C, self.N, mixture_w.shape[2])
@@ -531,7 +530,6 @@ class SWave(nn.Module):
             # and generate the masks
             dist = V.bmm(attractor)  # B, T*F, nspk
             mask = F.softmax(dist, dim=2)  # B, T*F, nspk
-            mask = mask.permute(0, 2, 1)
 
             # This is B, T
             source_seperaeted = mixture[:, :, None] * mask
@@ -540,10 +538,9 @@ class SWave(nn.Module):
             # *  till here : ATTRACTROS  *
             # ****************************
 
-            outputs.append(output_ii)
-            masks.append(mask)
+            outputs.append(source_seperaeted)
 
-        return torch.stack(outputs), masks
+        return torch.stack(outputs)
 
 
 class Encoder(nn.Module):
