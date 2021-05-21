@@ -11,7 +11,6 @@ import logging
 import time
 from pathlib import Path
 
-
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
 
@@ -20,7 +19,7 @@ from .evaluate import evaluate
 from .models.sisnr_loss import cal_loss
 from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
-from .IBM
+from .IBMseparation import ibm_generator, weight_generator
 
 logger = logging.getLogger(__name__)
 
@@ -189,9 +188,10 @@ class Solver(object):
                               updates=self.num_prints, name=name)
         for i, data in enumerate(logprog):
             mixture, lengths, sources = [x.to(self.device) for x in data]
-            ibm =
-            estimate_source = self.dmodel(mixture,ibm,weights)
-            # TODO change the above
+            ibm = ibm_generator(sources[:, 0, :], sources[:, 1, :], mixture)
+            weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
+            estimate_source = self.dmodel(mixture, ibm, weights)
+
 
             # only eval last layer
             if cross_valid:
@@ -202,7 +202,6 @@ class Solver(object):
             # apply a loss function after each layer
             with torch.autograd.set_detect_anomaly(True):
                 for c_idx, est_src in enumerate(estimate_source):
-
                     coeff = ((c_idx + 1) * (1 / cnt))
                     loss_i = 0
                     # SI-SNR loss

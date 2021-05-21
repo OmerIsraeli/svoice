@@ -174,36 +174,36 @@ winsound.PlaySound(file1, winsound.SND_FILENAME|winsound.SND_ASYNC)
 # winsound.PlaySound(filepath + '/recovered.wav', winsound.SND_FILENAME|winsound.SND_ASYNC)
 
 
-def ibm_generator(samples1 , samples2, sample_rate1):
+def ibm_generator(samples1 , samples2, mixture):
 
-    maxlength = max(len(samples1), len(samples1))
-
-    # Pad each signal to the length of the longest signal
-    samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
-    samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
-
-    # combine series together
-    mixed_series = samples1 + samples2
-
-    # Pad 3 wav files to whole number of seconds
-    extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
-    mixed_series = np.pad(mixed_series, (0, extrapadding), 'constant', constant_values=(0))
-    samples1 = np.pad(samples1, (0, extrapadding), 'constant', constant_values=(0))
-    samples2 = np.pad(samples2, (0, extrapadding), 'constant', constant_values=(0))
-
-    nperseg = sample_rate1 / 50
-
-    # Get stft of 3 wav files
-    f1, t1, Zsamples1 = signal.stft(samples1, fs=sample_rate1, nperseg=nperseg)
-    f2, t2, Zsamples2 = signal.stft(samples2, fs=sample_rate1, nperseg=nperseg)
-    fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
+    # maxlength = max(len(samples1), len(samples1))
+    #
+    # # Pad each signal to the length of the longest signal
+    # samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
+    # samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
+    #
+    # # combine series together
+    # mixed_series = samples1 + samples2
+    #
+    # # Pad 3 wav files to whole number of seconds
+    # extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
+    # mixed_series = np.pad(mixed_series, (0, extrapadding), 'constant', constant_values=(0))
+    # samples1 = np.pad(samples1, (0, extrapadding), 'constant', constant_values=(0))
+    # samples2 = np.pad(samples2, (0, extrapadding), 'constant', constant_values=(0))
+    #
+    # nperseg = sample_rate1 / 50
+    #
+    # # Get stft of 3 wav files
+    # f1, t1, Zsamples1 = signal.stft(samples1, fs=sample_rate1, nperseg=nperseg)
+    # f2, t2, Zsamples2 = signal.stft(samples2, fs=sample_rate1, nperseg=nperseg)
+    # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
 
     # Choose sample to create mask for
-    Zsample = Zsamples2
-    sample = samples2
+    Zsample = samples2
+    # sample = samples2
 
     # Calculate signal to noise ratio of clean signal versus combined signal
-    snr = np.divide(np.real(np.abs(Zsample)), np.real(np.abs(Zmixed_series)))
+    snr = np.divide(np.real(np.abs(Zsample)), np.real(np.abs(mixture)))
     # round snr to 0 or 1 to create binary mask
     mask = np.around(snr, 0)
 
@@ -216,35 +216,35 @@ def ibm_generator(samples1 , samples2, sample_rate1):
     return mask
 
 
-def weight_generator(samples1 , samples2, sample_rate1,rho):
+def weight_generator(samples1 , samples2, mixture,rho):
 
-    maxlength = max(len(samples1), len(samples1))
+    # maxlength = max(len(samples1), len(samples1))
+    #
+    # # Pad each signal to the length of the longest signal
+    # samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
+    # samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
+    #
+    # # combine series together
+    # mixed_series = samples1 + samples2
+    #
+    # # Pad 3 wav files to whole number of seconds
+    # extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
+    # mixed_series = np.pad(mixed_series, (0, extrapadding), 'constant', constant_values=(0))
+    # samples1 = np.pad(samples1, (0, extrapadding), 'constant', constant_values=(0))
+    # samples2 = np.pad(samples2, (0, extrapadding), 'constant', constant_values=(0))
+    #
+    # nperseg = sample_rate1 / 50
+    #
+    # # # Get stft of 3 wav files
+    #
+    # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
 
-    # Pad each signal to the length of the longest signal
-    samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
-    samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
 
-    # combine series together
-    mixed_series = samples1 + samples2
-
-    # Pad 3 wav files to whole number of seconds
-    extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
-    mixed_series = np.pad(mixed_series, (0, extrapadding), 'constant', constant_values=(0))
-    samples1 = np.pad(samples1, (0, extrapadding), 'constant', constant_values=(0))
-    samples2 = np.pad(samples2, (0, extrapadding), 'constant', constant_values=(0))
-
-    nperseg = sample_rate1 / 50
-
-    # Get stft of 3 wav files
-
-    fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
-
-
-    weights = Zmixed_series
+    weights = mixture
 
     weights[np.isnan(weights)] = 1
-    weights[Zmixed_series > rho]=1
-    weights[Zmixed_series <= rho] = 0
+    weights[mixture > rho]=1
+    weights[mixture <= rho] = 0
 
     return weights
 
