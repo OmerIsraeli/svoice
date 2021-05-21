@@ -430,7 +430,6 @@ class Separator(nn.Module):
         # merge back audio files
         output_all_wav = []
         for ii in range(len(output_all)):
-            print(output_all[ii].shape)
             # output_all[ii] = Batch * N*C * K * R
             output_ii = self.merge_chuncks(
                 output_all[ii], enc_rest)
@@ -499,18 +498,20 @@ class SWave(nn.Module):
             output_ii = output_ii.permute(0, 2, 1).reshape(-1, self.C)
             V = self.FC(output_ii)  # B*T, C
 
-            time_t = output_ii.size(2)
+            time_t = output_ii.size(0)
+
             V = V.view(-1, time_t, self.C)  # B, T, K
 
             # calculate the ideal attractors
             # first calculate the source assignment matrix Y
             if ibm is not None or weights is not None:
                 Y = ibm * weights.expand_as(ibm)  # B, T*F, nspk
+                Y = Y.permute(1, 2, 0)
 
                 # attractors are the weighted average of the embeddings
                 # calculated by V and Y
-                V_Y = torch.bmm(torch.transpose(V, 1, 2), Y)  # B, K, nspk
-                sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
+                V_Y = torch.bmm(torch.transpose(V, 1, 2), Y.cuda())  # B, K, nspk
+                sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y).cuda()  # B, K, nspk
                 attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
             else:
                 raise Exception("what")
@@ -522,6 +523,7 @@ class SWave(nn.Module):
 
             # This is B, T
             source_seperaeted = mixture[:, :, None] * mask
+            source_seperaeted = source_seperaeted.permute(0, 2, 1).contiguous()
 
             # ****************************
             # *  till here : ATTRACTROS  *
