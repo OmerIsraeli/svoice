@@ -300,6 +300,7 @@ class SWave(nn.Module):
                 sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
                 attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
             else:
+                # TODO add k-means
                 raise Exception("what")
 
             # calculate the distance bewteen embeddings and attractors

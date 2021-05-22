@@ -77,6 +77,7 @@ def evaluate(args, model=None, data_loader=None, sr=None):
                 # Forward
                 with torch.no_grad():
                     mixture /= mixture.max()
+                    # TODO remove ibm and weights
                     sources /= sources.max()
                     ibm = ibm_generator(sources[:, 0, :], sources[:, 1, :], mixture)
                     weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
