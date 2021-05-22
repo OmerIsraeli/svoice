@@ -9,11 +9,13 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from sklearn.cluster import KMeans
 from torch.autograd import Variable
 
 from DANet.torch_utils import FCLayer
 from ..utils import overlap_and_add
 from ..utils import capture_init
+
 
 class MulCatBlock(nn.Module):
 
@@ -249,7 +251,6 @@ class SWave(nn.Module):
 
         # To use this view time as part of a batch
         self.FC = FCLayer(self.C, self.C)
-        # TODO : choose epsilon
         self.eps = 10 ** (-6)
 
         # init
@@ -300,10 +301,13 @@ class SWave(nn.Module):
                 sum_Y = torch.sum(Y, 1, keepdim=True).expand_as(V_Y)  # B, K, nspk
                 attractor = V_Y / (sum_Y + self.eps)  # B, K, 2
             else:
-                # TODO add k-means
-                raise Exception("what")
+                # TODO change k-means nspk to somethiong real
+                nspk = 2
+                embedding = V.data.cpu().numpy()
+                kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(embedding.astype('float64'))
+                attractor = kmeans_model.cluster_centers_
 
-            # calculate the distance bewteen embeddings and attractors
+                # calculate the distance bewteen embeddings and attractors
             # and generate the masks
             dist = V.bmm(attractor)  # B, T*F, nspk
             mask = F.softmax(dist, dim=2)  # B, T*F, nspk
