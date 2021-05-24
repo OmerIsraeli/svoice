@@ -12,7 +12,7 @@ import torch.nn.functional as F
 from sklearn.cluster import KMeans
 from torch.autograd import Variable
 
-from DANet.torch_utils import FCLayer
+from ..torch_utils import FCLayer
 from ..utils import overlap_and_add
 from ..utils import capture_init
 
