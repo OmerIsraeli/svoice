@@ -303,11 +303,14 @@ class SWave(nn.Module):
             else:
                 # TODO change k-means nspk to somethiong real
                 nspk = 2
-                embedding = V.data.cpu().numpy()
-                kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(embedding.astype('float64'))
-                attractor = kmeans_model.cluster_centers_
+                emb_all = V.data.cpu().numpy()
+                att_list = []
+                for i in range(emb_all.shape[0]):
+                    kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(emb_all[i].astype('float32'))
+                    att_list.append(kmeans_model.cluster_centers_)
+                attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
 
-                # calculate the distance bewteen embeddings and attractors
+            # calculate the distance bewteen embeddings and attractors
             # and generate the masks
             dist = V.bmm(attractor)  # B, T*F, nspk
             mask = F.softmax(dist, dim=2)  # B, T*F, nspk
@@ -352,3 +355,4 @@ class Decoder(nn.Module):
         # now est_source is Batch * Speakers * T
 
         return est_source
+

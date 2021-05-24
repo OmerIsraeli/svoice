@@ -77,11 +77,7 @@ def evaluate(args, model=None, data_loader=None, sr=None):
                 # Forward
                 with torch.no_grad():
                     mixture /= mixture.max()
-                    # TODO remove ibm and weights
-                    sources /= sources.max()
-                    ibm = ibm_generator(sources[:, 0, :], sources[:, 1, :], mixture)
-                    weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
-                    estimate = model(mixture, ibm=ibm, weights=weights)[-1]
+                    estimate = model(mixture)[-1]
                 sisnr_loss, snr, estimate, reorder_estimate = cal_loss(
                     sources, estimate, lengths)
                 reorder_estimate = reorder_estimate.cpu()
