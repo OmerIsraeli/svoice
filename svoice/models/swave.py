@@ -282,10 +282,9 @@ class SWave(nn.Module):
             # ****************************
 
             # This should make output_ii into B*T, C
+            time_t = output_ii.size(-1)
             output_ii = output_ii.permute(0, 2, 1).reshape(-1, self.C)
             V = self.FC(output_ii)  # B*T, C
-
-            time_t = output_ii.size(0)
 
             V = V.view(-1, time_t, self.C)  # B, T, K
 
