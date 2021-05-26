@@ -172,9 +172,9 @@ class Solver(object):
                 separate(self.args, self.model, self.samples_dir)
 
                 if ON_COLAB:
-                    subprocess.run(["zip", "-r",
+                    subprocess.run(["zip",
                                     "/content/drive/MyDrive/Colab Notebooks/svoice_out.zip",
-                                    "/content/svoice/outputs"])
+                                    "-i", "/content/svoice/outputs"])
 
             self.history.append(metrics)
             info = " | ".join(
