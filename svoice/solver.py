@@ -21,6 +21,14 @@ from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
 from .IBMseparation import ibm_generator, weight_generator
 
+try:
+    from google.colab import files
+    import subprocess
+    ON_COLAB = True
+except ImportError:
+    ON_COLAB = False
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -160,6 +168,11 @@ class Solver(object):
                 # separate some samples
                 logger.info('Separate and save samples...')
                 separate(self.args, self.model, self.samples_dir)
+
+                if ON_COLAB:
+                    subprocess.run(["zip",
+                                    "/content/drive/My Drive/colab notebooks",
+                                    "/content/svoice/outputs"])
 
             self.history.append(metrics)
             info = " | ".join(
