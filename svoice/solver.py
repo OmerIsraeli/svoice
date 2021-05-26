@@ -172,7 +172,7 @@ class Solver(object):
                 separate(self.args, self.model, self.samples_dir)
 
                 if ON_COLAB:
-                    subprocess.run(["zip",
+                    subprocess.run(["zip", "-r",
                                     "/content/drive/MyDrive/Colab Notebooks/svoice_out.zip",
                                     "/content/svoice/outputs"])
 
