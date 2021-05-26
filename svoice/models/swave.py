@@ -311,9 +311,9 @@ class SWave(nn.Module):
 
                 att_list = []
                 for i in range(embedding.shape[0]):
-                    att_list.append(
-                        AgglomerativeClustering_model.fit(embedding[i].astype('float32')).cluster_centers_
-                    )
+                    num_of_spks = AgglomerativeClustering_model.fit(embedding[i].astype('float32')).n_clusters_
+                    kmeans_model = KMeans(n_clusters=num_of_spks, random_state=0).fit(embedding[i].astype('float32'))
+                    att_list.append(kmeans_model.cluster_centers_)
                 # calculate the distance bewteen embeddings and attractors
 
                 # emb_all = V.data.cpu().numpy()
