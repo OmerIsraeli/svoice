@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans,AgglomerativeClustering
 from torch.autograd import Variable
 
 from ..torch_utils import FCLayer
@@ -302,6 +302,15 @@ class SWave(nn.Module):
             else:
                 # TODO change k-means nspk to somethiong real
                 nspk = 2
+
+                embedding = V.data.cpu().numpy()
+                # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
+                # attractor = kmeans_model.cluster_centers_
+                AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float64'))
+                attractor= AgglomerativeClustering_model.cluster_centers_
+
+                # calculate the distance bewteen embeddings and attractors
+
                 emb_all = V.data.cpu().numpy()
                 att_list = []
                 for i in range(emb_all.shape[0]):
@@ -310,6 +319,7 @@ class SWave(nn.Module):
                 attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
 
             # calculate the distance bewteen embeddings and attractors
+
             # and generate the masks
             dist = V.bmm(attractor)  # B, T*F, nspk
             mask = F.softmax(dist, dim=2)  # B, T*F, nspk
