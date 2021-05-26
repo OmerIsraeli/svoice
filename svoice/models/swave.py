@@ -314,6 +314,7 @@ class SWave(nn.Module):
                     model.fit(emb_all[i].astype('float32'))
                     elbow=model.elbow_value_
                     kmeans_model = KMeans(n_clusters=elbow, random_state=0).fit(emb_all[i].astype('float32'))
+                    print(elbow)
                     att_list.append(kmeans_model.cluster_centers_)
 
                 attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
