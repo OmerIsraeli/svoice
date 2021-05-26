@@ -313,6 +313,7 @@ class SWave(nn.Module):
                     model = KElbowVisualizer(KMeans(), k=(2,6))
                     model.fit(emb_all[i].astype('float32'))
                     elbow=model.elbow_value_
+                    model.show()
                     kmeans_model = KMeans(n_clusters=elbow, random_state=0).fit(emb_all[i].astype('float32'))
                     print(elbow)
                     att_list.append(kmeans_model.cluster_centers_)
