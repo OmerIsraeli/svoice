@@ -28,6 +28,8 @@ try:
 except ImportError:
     ON_COLAB = False
 
+print("Colab status:", ON_COLAB)
+
 
 logger = logging.getLogger(__name__)
 

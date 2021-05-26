@@ -303,11 +303,11 @@ class SWave(nn.Module):
                 # TODO change k-means nspk to somethiong real
                 nspk = 2
 
-                embedding = V.data.cpu().numpy()
-                # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
-                # attractor = kmeans_model.cluster_centers_
-                AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float64'))
-                attractor= AgglomerativeClustering_model.cluster_centers_
+                # embedding = V.data.cpu().numpy()
+                # # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
+                # # attractor = kmeans_model.cluster_centers_
+                # AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float64'))
+                # attractor = AgglomerativeClustering_model.cluster_centers_
 
                 # calculate the distance bewteen embeddings and attractors
 
