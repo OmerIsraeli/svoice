@@ -11,6 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.cluster import KMeans,AgglomerativeClustering
 from torch.autograd import Variable
+from yellowbrick.cluster import KElbowVisualizer
 
 from ..torch_utils import FCLayer
 from ..utils import overlap_and_add
@@ -304,19 +305,21 @@ class SWave(nn.Module):
                 nspk = 2
 
                 embedding = V.data.cpu().numpy()
-                # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
-                # attractor = kmeans_model.cluster_centers_
-                AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float64'))
-                attractor= AgglomerativeClustering_model.cluster_centers_
-
                 # calculate the distance bewteen embeddings and attractors
 
                 emb_all = V.data.cpu().numpy()
                 att_list = []
+
                 for i in range(emb_all.shape[0]):
-                    kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(emb_all[i].astype('float32'))
+                    model = KElbowVisualizer(KMeans(), k=(2,6))
+                    model.fit(emb_all[i].astype('float32'))
+                    kmeans_model = KMeans(n_clusters=model.elbow_value_, random_state=0).fit(emb_all[i].astype('float32'))
                     att_list.append(kmeans_model.cluster_centers_)
                 attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
+                # for i in range(emb_all.shape[0]):
+                #     kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(emb_all[i].astype('float32'))
+                #     att_list.append(kmeans_model.cluster_centers_)
+                # attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
 
             # calculate the distance bewteen embeddings and attractors
 
