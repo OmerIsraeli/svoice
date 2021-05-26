@@ -306,7 +306,7 @@ class SWave(nn.Module):
                 embedding = V.data.cpu().numpy()
                 # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
                 # attractor = kmeans_model.cluster_centers_
-                AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float32'))
+                AgglomerativeClustering_model = AgglomerativeClustering()
 
                 att_list = []
                 for i in range(embedding.shape[0]):
