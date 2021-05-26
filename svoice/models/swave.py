@@ -303,19 +303,23 @@ class SWave(nn.Module):
                 # TODO change k-means nspk to somethiong real
                 nspk = 2
 
-                # embedding = V.data.cpu().numpy()
-                # # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
-                # # attractor = kmeans_model.cluster_centers_
-                # AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float64'))
-                # attractor = AgglomerativeClustering_model.cluster_centers_
+                embedding = V.data.cpu().numpy()
+                # kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit()
+                # attractor = kmeans_model.cluster_centers_
+                AgglomerativeClustering_model = AgglomerativeClustering().fit(embedding.astype('float32'))
 
+                att_list = []
+                for i in range(embedding.shape[0]):
+                    att_list.append(
+                        AgglomerativeClustering_model.fit(embedding[i].astype('float32')).cluster_centers_
+                    )
                 # calculate the distance bewteen embeddings and attractors
 
-                emb_all = V.data.cpu().numpy()
-                att_list = []
-                for i in range(emb_all.shape[0]):
-                    kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(emb_all[i].astype('float32'))
-                    att_list.append(kmeans_model.cluster_centers_)
+                # emb_all = V.data.cpu().numpy()
+                # att_list = []
+                # for i in range(emb_all.shape[0]):
+                #     kmeans_model = KMeans(n_clusters=nspk, random_state=0).fit(emb_all[i].astype('float32'))
+                #     att_list.append(kmeans_model.cluster_centers_)
                 attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
 
             # calculate the distance bewteen embeddings and attractors
