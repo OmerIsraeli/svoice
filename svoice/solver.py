@@ -171,7 +171,7 @@ class Solver(object):
 
                 if ON_COLAB:
                     subprocess.run(["zip",
-                                    "/content/drive/My Drive/colab notebooks",
+                                    "/content/drive/MyDrive/Colab Notebooks/svoice_out.zip",
                                     "/content/svoice/outputs"])
 
             self.history.append(metrics)
