@@ -44,11 +44,11 @@ beta2: 0.999
 stft_loss: False
 stft_sc_factor: .5
 stft_mag_factor: .5
-epochs: 100
+epochs: 100 # This was 100
 batch_size: 4
 max_norm: 5
 # learning rate scheduling
-lr_sched: step # can be either step or plateau
+lr_sched: plateau # can be either step or plateau
 step: 
   step_size: 2
   gamma: 0.98
@@ -59,11 +59,11 @@ plateau:
 # Models
 model: swave # either demucs or dwave
 swave:
-  N: 64
+  N: 128
   L: 8
   H: 128
   R: 6
-  C: 2
+  C: 10 # This was 2
   input_normalize: False
 
 # Experiment launching, distributed
