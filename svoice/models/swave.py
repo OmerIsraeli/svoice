@@ -315,7 +315,7 @@ class SWave(nn.Module):
                     model.fit(emb_all[i].astype('float32'))
                     elbow_ls.append(model.elbow_value_ if model.elbow_value_ is not None else 2)
 
-                spks = np.median(elbow_ls)
+                spks = int(np.median(np.array(elbow_ls)))
 
                 for i in range(emb_all.shape[0]):
                     kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
