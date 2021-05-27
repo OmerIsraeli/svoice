@@ -319,13 +319,13 @@ class SWave(nn.Module):
                     # model.fit(emb_all[i].astype('float32'))
                     model = DBSCAN(np.sqrt(self.C * 0.05), min_samples=int(0.1 * emb_all.shape[1]))
                     model.fit(emb_all[i])
-                    elbow_ls.append(np.unique(model.labels_.shape[0]) - 1)
+                    elbow_ls.append(np.unique(model.labels_) - 1)
 
                 spks = int(np.median(np.array(elbow_ls)))
                 if spks <= 0:
                     spks = 1
                     print("Didnt find any speakers!")
-                print(spks, model.labels_.shape, elbow_ls)
+                print(spks, elbow_ls)
 
                 for i in range(emb_all.shape[0]):
                     kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
