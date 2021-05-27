@@ -309,12 +309,17 @@ class SWave(nn.Module):
                 emb_all = V.data.cpu().numpy()
                 att_list = []
 
+                elbow_ls = []
                 for i in range(emb_all.shape[0]):
-                    model = KElbowVisualizer(KMeans(), k=(2,6))
+                    model = KElbowVisualizer(KMeans(), k=(2, 6))
                     model.fit(emb_all[i].astype('float32'))
-                    elbow = model.elbow_value_ if model.elbow_value_ is not None else 2
-                    kmeans_model = KMeans(n_clusters=elbow, random_state=0).fit(emb_all[i].astype('float32'))
-                    print(elbow)
+                    elbow_ls.append(model.elbow_value_ if model.elbow_value_ is not None else 2)
+
+                spks = np.median(elbow_ls)
+
+                for i in range(emb_all.shape[0]):
+                    kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
+                    print(spks)
                     att_list.append(kmeans_model.cluster_centers_)
 
                 attractor = torch.from_numpy(np.stack(att_list)).permute(0, 2, 1).cuda()
