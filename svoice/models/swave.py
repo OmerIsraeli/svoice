@@ -308,8 +308,8 @@ class SWave(nn.Module):
 
                 emb_all = V.data.cpu().numpy()
                 att_list = []
-
                 elbow_ls = []
+
                 for i in range(emb_all.shape[0]):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
                     # model.fit(emb_all[i].astype('float32'))
@@ -321,7 +321,7 @@ class SWave(nn.Module):
                 if spks <= 0:
                     spks = 1
                     print("Didnt find any speakers!")
-                print(spks, elbow_ls)
+                print(spks, model.labels_.shape, elbow_ls)
 
                 for i in range(emb_all.shape[0]):
                     kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
