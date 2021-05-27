@@ -313,7 +313,7 @@ class SWave(nn.Module):
                 for i in range(emb_all.shape[0]):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
                     # model.fit(emb_all[i].astype('float32'))
-                    model = DBSCAN(np.sqrt(self.C * 0.05), min_smaples=0.1 * emb_all.shape[1])
+                    model = DBSCAN(np.sqrt(self.C * 0.05), min_samples=int(0.1 * emb_all.shape[1]))
                     model.fit(emb_all[i])
                     elbow_ls.append(model.labels_.shape[0] - 1)
 
