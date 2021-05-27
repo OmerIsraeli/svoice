@@ -308,8 +308,12 @@ class SWave(nn.Module):
 
                 emb_all = V.data.cpu().numpy()
                 att_list = []
-
                 elbow_ls = []
+
+                rand_indices = np.random.choice(int(emb_all.shape[1]), int(0.1*emb_all.shape[1]))
+
+                emb_all = emb_all[:, rand_indices, :]
+
                 for i in range(emb_all.shape[0]):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
                     # model.fit(emb_all[i].astype('float32'))
