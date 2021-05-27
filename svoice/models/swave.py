@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from sklearn.cluster import KMeans,AgglomerativeClustering
+from sklearn.cluster import KMeans,AgglomerativeClustering, DBSCAN
 from torch.autograd import Variable
 from yellowbrick.cluster import KElbowVisualizer
 
@@ -311,9 +311,10 @@ class SWave(nn.Module):
 
                 elbow_ls = []
                 for i in range(emb_all.shape[0]):
-                    model = KElbowVisualizer(KMeans(), k=(2, 6))
-                    model.fit(emb_all[i].astype('float32'))
-                    elbow_ls.append(model.elbow_value_ if model.elbow_value_ is not None else 2)
+                    # model = KElbowVisualizer(KMeans(), k=(2, 6))
+                    # model.fit(emb_all[i].astype('float32'))
+                    model = DBSCAN(np.sqrt(self.C * 0.05), min_smaples=0.1 * emb_all.shape[1])
+                    elbow_ls.append(model.labels_.size() if model.elbow_value_ !=- 1 else 2)
 
                 spks = int(np.median(np.array(elbow_ls)))
 
