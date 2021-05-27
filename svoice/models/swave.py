@@ -323,7 +323,7 @@ class SWave(nn.Module):
 
                 spks = int(np.median(np.array(elbow_ls)))
                 if spks <= 0:
-                    spks = 1
+                    spks = 2
                     print("Didnt find any speakers!")
                 print(spks, elbow_ls)
 
