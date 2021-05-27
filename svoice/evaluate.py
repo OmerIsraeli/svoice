@@ -78,8 +78,13 @@ def evaluate(args, model=None, data_loader=None, sr=None):
                 with torch.no_grad():
                     mixture /= mixture.max()
                     estimate = model(mixture)[-1]
+
+                if sources.size() != estimate.size():
+                    print("WARNING: Wrong amount of speakers detected! choosing first to match size")
+                    estimate = estimate[:, :sources.shape[1], :]
                 sisnr_loss, snr, estimate, reorder_estimate = cal_loss(
                     sources, estimate, lengths)
+
                 reorder_estimate = reorder_estimate.cpu()
                 sources = sources.cpu()
                 mixture = mixture.cpu()
