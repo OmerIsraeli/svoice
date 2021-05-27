@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from sklearn.cluster import KMeans,AgglomerativeClustering, DBSCAN
+from sklearn.cluster import KMeans, DBSCAN
 from torch.autograd import Variable
 from yellowbrick.cluster import KElbowVisualizer
 
@@ -314,9 +314,14 @@ class SWave(nn.Module):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
                     # model.fit(emb_all[i].astype('float32'))
                     model = DBSCAN(np.sqrt(self.C * 0.05), min_smaples=0.1 * emb_all.shape[1])
-                    elbow_ls.append(model.labels_.size() if model.elbow_value_ !=- 1 else 2)
+                    model.fit(emb_all[i])
+                    elbow_ls.append(model.labels.size() - 1)
 
                 spks = int(np.median(np.array(elbow_ls)))
+                if spks <= 0:
+                    spks = 1
+                    print("Didnt find any speakers!")
+                print(spks, elbow_ls)
 
                 for i in range(emb_all.shape[0]):
                     kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
