@@ -315,7 +315,7 @@ class SWave(nn.Module):
                     # model.fit(emb_all[i].astype('float32'))
                     model = DBSCAN(np.sqrt(self.C * 0.05), min_smaples=0.1 * emb_all.shape[1])
                     model.fit(emb_all[i])
-                    elbow_ls.append(model.labels.size() - 1)
+                    elbow_ls.append(model.labels_.shape[0] - 1)
 
                 spks = int(np.median(np.array(elbow_ls)))
                 if spks <= 0:
