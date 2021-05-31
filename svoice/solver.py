@@ -204,6 +204,7 @@ class Solver(object):
         for i, data in enumerate(logprog):
             mixture, lengths, sources = [x.to(self.device) for x in data]
             ibm = ibm_generator(sources[:, 0, :], sources[:, 1, :], mixture)
+            print(ibm.shape)
             weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
             estimate_source = self.dmodel(mixture, ibm, weights)
 
