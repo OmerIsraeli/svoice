@@ -334,10 +334,9 @@ class SWave(nn.Module):
                     fig.savefig(os.path.join(
                         os.path.dirname(os.path.abspath(__file__)),
                         f"TSNE_clustering{i}.png"))
-                    elbow_ls.append(np.unique(model.labels_) - 1)
-
+                    elbow_ls.append(len(np.unique(model.labels_)) - 1)
                 spks = int(np.median(np.array(elbow_ls)))
-                if spks <= 0:
+                if spks <= 1:
                     spks = 2
                     print("Didnt find any speakers!")
                 print(spks, elbow_ls)
