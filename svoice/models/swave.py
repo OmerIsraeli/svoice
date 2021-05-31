@@ -20,6 +20,8 @@ from ..torch_utils import FCLayer
 from ..utils import capture_init
 from ..utils import overlap_and_add
 
+count = 0
+
 
 class MulCatBlock(nn.Module):
 
@@ -331,9 +333,11 @@ class SWave(nn.Module):
                     for name, points in groups:
                         ax.scatter(points.x, points.y, label=name)
                     ax.legend()
+                    global count
+                    count += 1
                     fig.savefig(os.path.join(
                         os.path.dirname(os.path.abspath(__file__)),
-                        f"TSNE_clustering{np.random.randint(1,1000000)}.png"))
+                        f"TSNE_clustering_C={self.C}_num={count}.png"))
                     elbow_ls.append(len(np.unique(model.labels_)) - 1)
                 spks = int(np.median(np.array(elbow_ls)))
                 if spks <= 1:
