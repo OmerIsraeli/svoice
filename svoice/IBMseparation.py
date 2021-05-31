@@ -204,14 +204,14 @@ def ibm_generator(samples,  mixture):
     # Choose sample to create mask for
     # Zsample = samples2
     # sample = samples2
-    masks = tuple()
+    masks=[]
     one = torch.ones_like(samples[0])
     for sample in samples:
         snr = torch.div(torch.abs(sample), torch.abs(mixture))
         snr[snr != snr] = 0.0
         mask=torch.round(snr)
         mask = torch.where(mask > 1, one, mask)
-        masks = masks+(mask,)
+        masks.append(mask)
 
     # # Calculate signal to noise ratio of clean signal versus combined signal
     # snr1 = torch.div(torch.abs(samples1), torch.abs(mixture))
@@ -228,7 +228,7 @@ def ibm_generator(samples,  mixture):
     # mask1 = torch.where(mask1 > 1, one, mask1)
     # mask2 = torch.where(mask2 > 1, one, mask2)
 
-    return torch.stack(mask)
+    return torch.stack(masks)
 
 
 def weight_generator(samples1, samples2, mixture, rho):
