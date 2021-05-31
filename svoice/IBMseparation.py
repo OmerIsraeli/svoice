@@ -204,7 +204,7 @@ def ibm_generator(samples,  mixture):
     # Choose sample to create mask for
     # Zsample = samples2
     # sample = samples2
-    masks=[]
+    masks = tuple()
     one = torch.ones_like(samples[0])
     for sample in samples:
         snr = torch.div(torch.abs(sample), torch.abs(mixture))
