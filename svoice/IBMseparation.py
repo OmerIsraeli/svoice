@@ -177,7 +177,7 @@ file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV";
 # winsound.PlaySound(filepath + '/recovered.wav', winsound.SND_FILENAME|winsound.SND_ASYNC)
 
 
-def ibm_generator(samples1, samples2, mixture):
+def ibm_generator(samples,  mixture):
 
     # maxlength = max(len(samples1), len(samples1))
     #
@@ -204,23 +204,31 @@ def ibm_generator(samples1, samples2, mixture):
     # Choose sample to create mask for
     # Zsample = samples2
     # sample = samples2
+    masks=[]
+    one = torch.ones_like(samples[0])
+    for sample in samples:
+        snr = torch.div(torch.abs(sample), torch.abs(mixture))
+        snr[snr != snr] = 0.0
+        mask=torch.round(snr)
+        mask = torch.where(mask > 1, one, mask)
+        masks.append(mask)
 
-    # Calculate signal to noise ratio of clean signal versus combined signal
-    snr1 = torch.div(torch.abs(samples1), torch.abs(mixture))
-    snr2 = torch.div(torch.abs(samples2), torch.abs(mixture))
-    snr1[snr1 != snr1] = 0.0
-    snr2[snr2 != snr2] = 0.0
+    # # Calculate signal to noise ratio of clean signal versus combined signal
+    # snr1 = torch.div(torch.abs(samples1), torch.abs(mixture))
+    # snr2 = torch.div(torch.abs(samples2), torch.abs(mixture))
+    # snr1[snr1 != snr1] = 0.0
+    # snr2[snr2 != snr2] = 0.0
+    #
+    # # round snr to 0 or 1 to create binary mask
+    # mask1 = torch.round(snr1)
+    # mask2 = torch.round(snr2)
+    #
+    # one = torch.ones_like(snr1)
+    #
+    # mask1 = torch.where(mask1 > 1, one, mask1)
+    # mask2 = torch.where(mask2 > 1, one, mask2)
 
-    # round snr to 0 or 1 to create binary mask
-    mask1 = torch.round(snr1)
-    mask2 = torch.round(snr2)
-
-    one = torch.ones_like(snr1)
-
-    mask1 = torch.where(mask1 > 1, one, mask1)
-    mask2 = torch.where(mask2 > 1, one, mask2)
-
-    return torch.stack([mask1, mask2])
+    return torch.stack(mask)
 
 
 def weight_generator(samples1, samples2, mixture, rho):
@@ -257,7 +265,7 @@ def weight_generator(samples1, samples2, mixture, rho):
 
 # %% Join 2 wav files together
 # Make sure all 3 wav files are the same length
-# Pad all 3 wav files to the nearest second
+ # Pad all 3 wav files to the nearest second
 if __name__ == '__main__':
     # Read 2 wav files
     sample_rate1, samples1 = wavfile.read(file1)
