@@ -4,21 +4,21 @@
 # LICENSE file in the root directory of this source tree.
 
 # Authors: Eliya Nachmani (enk100), Yossi Adi (adiyoss), Lior Wolf
+import os
 
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans, DBSCAN
-from sklearn.maniflod import TSNE
+from sklearn.manifold import TSNE
 from torch.autograd import Variable
-from yellowbrick.cluster import KElbowVisualizer
 
 from ..torch_utils import FCLayer
-from ..utils import overlap_and_add
 from ..utils import capture_init
+from ..utils import overlap_and_add
 
 
 class MulCatBlock(nn.Module):
@@ -313,10 +313,9 @@ class SWave(nn.Module):
                 att_list = []
                 elbow_ls = []
 
-                rand_indices = np.random.choice(int(emb_all.shape[1]), int(0.1*emb_all.shape[1]))
+                rand_indices = np.random.choice(int(emb_all.shape[1]), int(0.1 * emb_all.shape[1]))
 
                 emb_all = emb_all[:, rand_indices, :]
-
 
                 for i in range(emb_all.shape[0]):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
@@ -332,7 +331,9 @@ class SWave(nn.Module):
                     for name, points in groups:
                         ax.scatter(points.x, points.y, label=name)
                     ax.legend()
-                    fig.savefig("./TSNE_clustering.png")
+                    fig.savefig(os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)),
+                        f"TSNE_clustering{i}.png"))
                     elbow_ls.append(np.unique(model.labels_) - 1)
 
                 spks = int(np.median(np.array(elbow_ls)))
@@ -398,4 +399,3 @@ class Decoder(nn.Module):
         # now est_source is Batch * Speakers * T
 
         return est_source
-
