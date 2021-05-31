@@ -205,7 +205,7 @@ class Solver(object):
             mixture, lengths, sources = [x.to(self.device) for x in data]
             sources_ibm= [sources[:,i,:] for i in range(sources.shape[1])]
             ibm = ibm_generator(sources_ibm, mixture)
-            print(ibm.shape)
+            #print(ibm.shape)
             weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
             estimate_source = self.dmodel(mixture, ibm, weights)
 
