@@ -211,7 +211,7 @@ def ibm_generator(samples,  mixture):
         snr[snr != snr] = 0.0
         mask=torch.round(snr)
         mask = torch.where(mask > 1, one, mask)
-        masks.append(mask)
+        masks = masks+(mask,)
 
     # # Calculate signal to noise ratio of clean signal versus combined signal
     # snr1 = torch.div(torch.abs(samples1), torch.abs(mixture))
