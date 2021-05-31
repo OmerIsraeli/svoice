@@ -333,7 +333,7 @@ class SWave(nn.Module):
                     ax.legend()
                     fig.savefig(os.path.join(
                         os.path.dirname(os.path.abspath(__file__)),
-                        f"TSNE_clustering{i}.png"))
+                        f"TSNE_clustering{np.random.randint(1,1000000)}.png"))
                     elbow_ls.append(len(np.unique(model.labels_)) - 1)
                 spks = int(np.median(np.array(elbow_ls)))
                 if spks <= 1:
