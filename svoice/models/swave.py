@@ -298,6 +298,7 @@ class SWave(nn.Module):
             # first calculate the source assignment matrix Y
             if ibm is not None or weights is not None:
                 Y = ibm * weights.expand_as(ibm)  # B, T*F, nspk
+                print(Y.shape)
                 Y = Y.permute(1, 2, 0)
 
                 # attractors are the weighted average of the embeddings
