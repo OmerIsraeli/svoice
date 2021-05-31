@@ -6,10 +6,13 @@
 # Authors: Eliya Nachmani (enk100), Yossi Adi (adiyoss), Lior Wolf
 
 import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.cluster import KMeans, DBSCAN
+from sklearn.maniflod import TSNE
 from torch.autograd import Variable
 from yellowbrick.cluster import KElbowVisualizer
 
@@ -314,11 +317,22 @@ class SWave(nn.Module):
 
                 emb_all = emb_all[:, rand_indices, :]
 
+
                 for i in range(emb_all.shape[0]):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
                     # model.fit(emb_all[i].astype('float32'))
                     model = DBSCAN(np.sqrt(self.C * 0.05), min_samples=int(0.1 * emb_all.shape[1]))
+
                     model.fit(emb_all[i])
+                    emb_2d = TSNE().fit_transform(emb_all[i])
+                    # if np.unique(model.labels_) - 1 > 0:
+                    groups = pd.DataFrame(emb_2d, columns=['x', 'y']).assign(category=model.labels_).groupby(
+                        'category')
+                    fig, ax = plt.subplots()
+                    for name, points in groups:
+                        ax.scatter(points.x, points.y, label=name)
+                    ax.legend()
+                    fig.savefig("./TSNE_clustering.png")
                     elbow_ls.append(np.unique(model.labels_) - 1)
 
                 spks = int(np.median(np.array(elbow_ls)))
