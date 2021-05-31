@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.cluster import KMeans, DBSCAN
-from sklearn.maniflod import TSNE
+from sklearn.manifold import TSNE
 from torch.autograd import Variable
 from yellowbrick.cluster import KElbowVisualizer
 
