@@ -334,7 +334,7 @@ class SWave(nn.Module):
                     ax.legend()
                     fig.savefig("./TSNE_clustering.png")
                     elbow_ls.append(np.unique(model.labels_) - 1)
-
+                print(elbow_ls)
                 spks = int(np.median(np.array(elbow_ls)))
                 if spks <= 0:
                     spks = 2
