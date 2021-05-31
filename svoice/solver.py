@@ -203,7 +203,8 @@ class Solver(object):
                               updates=self.num_prints, name=name)
         for i, data in enumerate(logprog):
             mixture, lengths, sources = [x.to(self.device) for x in data]
-            ibm = ibm_generator(sources[:, 0, :], sources[:, 1, :], mixture)
+            sources_ibm= [sources[:,i,:] for i in range(sources.shape[1])]
+            ibm = ibm_generator(sources_ibm, mixture)
             print(ibm.shape)
             weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
             estimate_source = self.dmodel(mixture, ibm, weights)
