@@ -21,31 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1ff54568-5193-4de9-816f-89884a40aaa8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/svoice/data/audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/svoice/data/audio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/1919-142785-0045_6319-275224-0016.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/1919-142785-0045_6319-275224-0016_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/1919-142785-0045_6319-275224-0016_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2803-154328-0017_8297-275155-0016.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2803-154328-0017_8297-275155-0016_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2803-154328-0017_8297-275155-0016_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2803-161169-0001_7976-110523-0004.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2803-161169-0001_7976-110523-0004_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2803-161169-0001_7976-110523-0004_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2902-9006-0008_2412-153954-0015.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2902-9006-0008_2412-153954-0015_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2902-9006-0008_2412-153954-0015_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/3752-4943-0021_84-121550-0018.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/3752-4943-0021_84-121550-0018_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/3752-4943-0021_84-121550-0018_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/5694-64038-0005_251-137823-0002.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/5694-64038-0005_251-137823-0002_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/5694-64038-0005_251-137823-0002_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/6313-76958-0012_5536-43363-0016.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/6313-76958-0012_5536-43363-0016_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/6313-76958-0012_5536-43363-0016_s2.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/8842-302201-0004_3081-166546-0049.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/8842-302201-0004_3081-166546-0049_s1.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/8842-302201-0004_3081-166546-0049_s2.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

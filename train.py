@@ -5,11 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 # Authors: Yossi Adi (adiyoss) and  Alexandre Défossez (adefossez)
 
+import subprocess as sp
+import os
+sp.run(["pip", "install", "-r", os.path.join(os.getcwd(), "requirements.txt")])
+
 import json
 import logging
-import os
 import socket
-import subprocess as sp
 import sys
 import time
 
