@@ -20,6 +20,8 @@ sp.run(["pip", "install", "--upgrade", "azureml-sdk"])
 sp.run(["pip", "install", "omegaconf"])
 sp.run(["pip", "install", "--upgrade", "omegaconf"])
 sp.run(["pip", "install", "-U", "yellowbrick"])
+sp.run(["conda", "install", "-c", "roebel", "pysndfile"])
+
 
 
 import json
