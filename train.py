@@ -8,6 +8,9 @@
 import subprocess as sp
 import os
 sp.run(["pip", "install", "-r", os.path.join(os.getcwd(), "requirements.txt")])
+sp.run(["pip", "install", "--upgrade", "azureml-sdk"])
+sp.run(["pip", "install", "-U", "yellowbrick"])
+
 
 import json
 import logging
