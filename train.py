@@ -10,7 +10,7 @@ import os
 sp.run(["pip", "install", "-r", os.path.join(os.getcwd(), "requirements.txt")])
 sp.run(["pip", "install", "--upgrade", "azureml-sdk"])
 sp.run(["pip", "install", "omegaconf"])
-sp.run(["pip", "install", "--upgrade", "omegaconf-sdk"])
+sp.run(["pip", "install", "--upgrade", "omegaconf"])
 sp.run(["pip", "install", "-U", "yellowbrick"])
 
 
