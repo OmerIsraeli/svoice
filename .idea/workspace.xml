@@ -20,10 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1ff54568-5193-4de9-816f-89884a40aaa8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DANet" beforeDir="false" afterPath="$PROJECT_DIR$/DANet" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DANet/DANet/DANet_train.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/DANet/DANet/DANet_train.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/svoice/models/swave.py" beforeDir="false" afterPath="$PROJECT_DIR$/svoice/models/swave.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/svoice/data/audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/svoice/data/audio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/svoice/solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/svoice/solver.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +32,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="JupyterTrust" id="8a5206a7-c77b-468f-8979-8d2025315e88" />
   <component name="ProjectId" id="1sOwYKsHmtzN6QMHKO9Wi5XIX86" />

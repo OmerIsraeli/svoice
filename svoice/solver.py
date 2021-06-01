@@ -201,14 +201,15 @@ class Solver(object):
         name = label + f" | Epoch {epoch + 1}"
         logprog = LogProgress(logger, data_loader,
                               updates=self.num_prints, name=name)
+
         for i, data in enumerate(logprog):
+
             mixture, lengths, sources = [x.to(self.device) for x in data]
-            sources_ibm= [sources[:,i,:] for i in range(sources.shape[1])]
+            sources_ibm = [sources[:,i,:] for i in range(sources.shape[1])]
             ibm = ibm_generator(sources_ibm, mixture)
             #print(ibm.shape)
             weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
             estimate_source = self.dmodel(mixture, ibm, weights)
-
 
             # only eval last layer
             if cross_valid:
