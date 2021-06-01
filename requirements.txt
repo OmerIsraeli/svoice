@@ -10,3 +10,4 @@ numba==0.48
 matplotlib
 pandas
 azureml-core
+omegaconf
