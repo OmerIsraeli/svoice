@@ -274,6 +274,7 @@ class SWave(nn.Module):
         T_mix = mixture.size(-1)
         # generate wav after each RNN block and optimize the loss
         outputs = []
+        masks = []
         for ii in range(len(output_all)):
             output_ii = output_all[ii].view(
                 mixture.shape[0], self.C, self.N, mixture_w.shape[2])
@@ -331,20 +332,25 @@ class SWave(nn.Module):
                     # if np.unique(model.labels_) - 1 > 0:
                     groups = pd.DataFrame(emb_2d, columns=['x', 'y']).assign(category=model.labels_).groupby(
                         'category')
-                    fig, ax = plt.subplots()
-                    for name, points in groups:
-                        ax.scatter(points.x, points.y, label=name)
-                    ax.legend()
+
                     global count
                     count += 1
-                    fig.savefig(os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)),
-                        f"TSNE_clustering_C={self.C}_num={count}.png"))
+
+                    if count % 100 == 1 or True:
+                        fig, ax = plt.subplots()
+                        for name, points in groups:
+                            ax.scatter(points.x, points.y, label=name)
+                        ax.legend()
+
+                        fig.savefig(os.path.join(
+                            os.path.dirname(os.path.abspath(__file__)),
+                            f"TSNE_clustering_C={self.C}_num={count}.png"))
+
                     elbow_ls.append(len(np.unique(model.labels_)) - 1)
                 spks = int(np.median(np.array(elbow_ls)))
-                if spks <= 1:
-                    spks = 2
-                    print("Didnt find any speakers!")
+                if spks <= 2:
+                    spks = 3
+                    print("Didnt find 3 speakers!")
                 print(spks, elbow_ls)
 
                 for i in range(emb_all.shape[0]):
@@ -372,9 +378,10 @@ class SWave(nn.Module):
             # *  till here : ATTRACTROS  *
             # ****************************
 
+            masks.append(mask)
             outputs.append(source_seperaeted)
 
-        return torch.stack(outputs)
+        return torch.stack(outputs), torch.stack(masks)
 
 
 class Encoder(nn.Module):

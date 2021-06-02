@@ -3,6 +3,5 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/DANet" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/IBM-Separation" vcs="Git" />
   </component>
 </project>

@@ -12,17 +12,15 @@ req_as_str = "pesq==0.0.1 numpy==1.19.4 tqdm==4.51.0 hydra_core==1.0.3 hydra_col
 torchaudio==0.6.0 librosa==0.7.1 numba==0.48 matplotlib pandas azureml-core omegaconf pysndfile"
 
 
-for item in req_as_str.split(" "):
-    sp.run(["pip", "install", item])
-
-sp.run(["pip", "install", "-r", os.path.join(os.getcwd(), "requirements.txt")])
-sp.run(["pip", "install", "--upgrade", "azureml-sdk"])
-sp.run(["pip", "install", "omegaconf"])
-sp.run(["pip", "install", "--upgrade", "omegaconf"])
-sp.run(["pip", "install", "-U", "yellowbrick"])
-sp.run(["conda", "install", "-c", "roebel", "pysndfile"])
-
-
+# for item in req_as_str.split(" "):
+#     sp.run(["pip", "install", item])
+#
+# sp.run(["pip", "install", "-r", os.path.join(os.getcwd(), "requirements.txt")])
+# sp.run(["pip", "install", "--upgrade", "azureml-sdk"])
+# sp.run(["pip", "install", "omegaconf"])
+# sp.run(["pip", "install", "--upgrade", "omegaconf"])
+# sp.run(["pip", "install", "-U", "yellowbrick"])
+# sp.run(["conda", "install", "-c", "roebel", "pysndfile"])
 
 import json
 import logging

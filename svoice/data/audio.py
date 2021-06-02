@@ -30,7 +30,7 @@ def find_audio_files(path, exts=[".wav"], progress=True):
     audio_files = sorted(audio_files)  # Take only first 100 files
     for i in range(120, len(audio_files)):
         os.remove(audio_files[i])
-    audio_files = audio_files[:100]
+    audio_files = audio_files[:1]
     meta = []
     if progress:
         audio_files = tqdm.tqdm(audio_files,  ncols=80)

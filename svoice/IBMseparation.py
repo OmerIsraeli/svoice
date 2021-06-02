@@ -11,12 +11,13 @@ Created on Wed Aug  8 20:26:54 2018
 # http://scipy.github.io/devdocs/generated/scipy.signal.stft.html
 # http://www.cs.northwestern.edu/~pardo/courses/eecs352/lectures/MPM14-Time-Frequency-Masking.pdf
 
+from math import ceil
+
+import numpy as np
 # %% Spectrograms
 import torch
 from scipy import signal
 from scipy.io import wavfile
-import numpy as np
-from math import ceil
 
 # %% Import 2 wav files
 
@@ -25,8 +26,9 @@ filepath = "C:/Users/User/OneDrive - City, University of London/Dissertation/TIM
 
 picturepath = "C:/Users/User/OneDrive - City, University of London/Dissertation/Code/"
 
-file1 = filepath + "/TRAIN/DR1/FDAW0/SA1.WAV";
-file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV";
+file1 = filepath + "/TRAIN/DR1/FDAW0/SA1.WAV"
+file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV"
+
 
 # %% Play wav file
 
@@ -177,82 +179,20 @@ file2 = filepath + "/TRAIN/DR1/MCPM0/SA2.WAV";
 # winsound.PlaySound(filepath + '/recovered.wav', winsound.SND_FILENAME|winsound.SND_ASYNC)
 
 
-def ibm_generator(samples,  mixture):
-
-    # maxlength = max(len(samples1), len(samples1))
-    #
-    # # Pad each signal to the length of the longest signal
-    # samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
-    # samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
-    #
-    # # combine series together
-    # mixed_series = samples1 + samples2
-    #
-    # # Pad 3 wav files to whole number of seconds
-    # extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
-    # mixed_series = np.pad(mixed_series, (0, extrapadding), 'constant', constant_values=(0))
-    # samples1 = np.pad(samples1, (0, extrapadding), 'constant', constant_values=(0))
-    # samples2 = np.pad(samples2, (0, extrapadding), 'constant', constant_values=(0))
-    #
-    # nperseg = sample_rate1 / 50
-    #
-    # # Get stft of 3 wav files
-    # f1, t1, Zsamples1 = signal.stft(samples1, fs=sample_rate1, nperseg=nperseg)
-    # f2, t2, Zsamples2 = signal.stft(samples2, fs=sample_rate1, nperseg=nperseg)
-    # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
-
-    # Choose sample to create mask for
-    # Zsample = samples2
-    # sample = samples2
-    masks=[]
+def ibm_generator(samples, mixture):
+    masks = []
     one = torch.ones_like(samples[0])
     for sample in samples:
         snr = torch.div(torch.abs(sample), torch.abs(mixture))
         snr[snr != snr] = 0.0
-        mask=torch.round(snr)
+        mask = torch.round(snr)
         mask = torch.where(mask > 1, one, mask)
         masks.append(mask)
-
-    # # Calculate signal to noise ratio of clean signal versus combined signal
-    # snr1 = torch.div(torch.abs(samples1), torch.abs(mixture))
-    # snr2 = torch.div(torch.abs(samples2), torch.abs(mixture))
-    # snr1[snr1 != snr1] = 0.0
-    # snr2[snr2 != snr2] = 0.0
-    #
-    # # round snr to 0 or 1 to create binary mask
-    # mask1 = torch.round(snr1)
-    # mask2 = torch.round(snr2)
-    #
-    # one = torch.ones_like(snr1)
-    #
-    # mask1 = torch.where(mask1 > 1, one, mask1)
-    # mask2 = torch.where(mask2 > 1, one, mask2)
 
     return torch.stack(masks)
 
 
 def weight_generator(samples1, samples2, mixture, rho):
-    # maxlength = max(len(samples1), len(samples1))
-    #
-    # # Pad each signal to the length of the longest signal
-    # samples1 = np.pad(samples1, (0, maxlength - len(samples1)), 'constant', constant_values=(0))
-    # samples2 = np.pad(samples2, (0, maxlength - len(samples2)), 'constant', constant_values=(0))
-    #
-    # # combine series together
-    # mixed_series = samples1 + samples2
-    #
-    # # Pad 3 wav files to whole number of seconds
-    # extrapadding = (ceil(len(mixed_series) / sample_rate1) * sample_rate1) - len(mixed_series)
-    # mixed_series = np.pad(mixed_series, (0, extrapadding), 'constant', constant_values=(0))
-    # samples1 = np.pad(samples1, (0, extrapadding), 'constant', constant_values=(0))
-    # samples2 = np.pad(samples2, (0, extrapadding), 'constant', constant_values=(0))
-    #
-    # nperseg = sample_rate1 / 50
-    #
-    # # # Get stft of 3 wav files
-    #
-    # fmixed, tmixed, Zmixed_series = signal.stft(mixed_series, fs=sample_rate1, nperseg=nperseg)
-
     weights = mixture.clone()
 
     zero = torch.zeros_like(weights)
@@ -265,7 +205,7 @@ def weight_generator(samples1, samples2, mixture, rho):
 
 # %% Join 2 wav files together
 # Make sure all 3 wav files are the same length
- # Pad all 3 wav files to the nearest second
+# Pad all 3 wav files to the nearest second
 if __name__ == '__main__':
     # Read 2 wav files
     sample_rate1, samples1 = wavfile.read(file1)

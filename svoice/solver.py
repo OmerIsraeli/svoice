@@ -20,6 +20,7 @@ from .models.sisnr_loss import cal_loss
 from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
 from .IBMseparation import ibm_generator, weight_generator
+from .models.sisnr_loss import danet_loss
 
 try:
     from google.colab import files
@@ -209,7 +210,7 @@ class Solver(object):
             ibm = ibm_generator(sources_ibm, mixture)
             #print(ibm.shape)
             weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
-            estimate_source = self.dmodel(mixture, ibm, weights)
+            estimate_source, masks = self.dmodel(mixture, ibm, weights)
 
             # only eval last layer
             if cross_valid:
@@ -219,14 +220,14 @@ class Solver(object):
             cnt = len(estimate_source)
             # apply a loss function after each layer
             with torch.autograd.set_detect_anomaly(True):
-                for c_idx, est_src in enumerate(estimate_source):
+                for c_idx, est_mask in enumerate(masks):
                     coeff = ((c_idx + 1) * (1 / cnt))
-                    loss_i = 0
                     # SI-SNR loss
-                    sisnr_loss, snr, est_src, reorder_est_src = cal_loss(
-                        sources, est_src, lengths)
-                    loss += (coeff * sisnr_loss)
-                loss /= len(estimate_source)
+                    # sisnr_loss, _, _, _ = cal_loss(
+                    #     sources, est_src, lengths)
+                    temp_loss = danet_loss(mixture, sources, est_mask)
+                    loss += (coeff * temp_loss)
+                loss /= len(masks)
 
                 if not cross_valid:
                     # optimize model in training mode
