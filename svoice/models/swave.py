@@ -257,7 +257,7 @@ class SWave(nn.Module):
                                    self.filter_dim, self.num_spk, self.layer, self.segment_size, self.input_normalize)
 
         # To use this view time as part of a batch
-        self.FC = FCLayer(self.C, self.C)
+        self.FC = FCLayer(self.C, self.C, nonlinearity="tanh")
         self.eps = 10 ** (-6)
 
         # init
@@ -275,6 +275,7 @@ class SWave(nn.Module):
         # generate wav after each RNN block and optimize the loss
         outputs = []
         masks = []
+        feature_maps = []
         for ii in range(len(output_all)):
             output_ii = output_all[ii].view(
                 mixture.shape[0], self.C, self.N, mixture_w.shape[2])
@@ -348,9 +349,9 @@ class SWave(nn.Module):
 
                     elbow_ls.append(len(np.unique(model.labels_)) - 1)
                 spks = int(np.median(np.array(elbow_ls)))
-                if spks <= 2:
-                    spks = 3
-                    print("Didnt find 3 speakers!")
+                if spks <= 1:
+                    spks = 2
+                    print("Didnt find 2 speakers!")
                 print(spks, elbow_ls)
 
                 for i in range(emb_all.shape[0]):
@@ -378,10 +379,11 @@ class SWave(nn.Module):
             # *  till here : ATTRACTROS  *
             # ****************************
 
+            feature_maps.append(V)
             masks.append(mask)
-            outputs.append(source_seperaeted)
+            outputs.append(source_seperaeted)  # Output is B, Spk, T
 
-        return torch.stack(outputs), torch.stack(masks)
+        return torch.stack(outputs), torch.stack(masks), torch.stack(feature_maps)
 
 
 class Encoder(nn.Module):

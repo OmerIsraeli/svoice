@@ -16,7 +16,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
 
 from . import distrib
 from .evaluate import evaluate
-from .models.sisnr_loss import cal_loss
+from .models.sisnr_loss import cal_loss, danet_feature_loss
 from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
 from .IBMseparation import ibm_generator, weight_generator
@@ -206,11 +206,11 @@ class Solver(object):
         for i, data in enumerate(logprog):
 
             mixture, lengths, sources = [x.to(self.device) for x in data]
-            sources_ibm = [sources[:,i,:] for i in range(sources.shape[1])]
+            sources_ibm = [sources[:, i, :] for i in range(sources.shape[1])]
             ibm = ibm_generator(sources_ibm, mixture)
             #print(ibm.shape)
             weights = weight_generator(sources[:, 0, :], sources[:, 1, :], mixture, 10 ** (-5))
-            estimate_source, masks = self.dmodel(mixture, ibm, weights)
+            estimate_source, masks, feat_maps = self.dmodel(mixture, ibm, weights)
 
             # only eval last layer
             if cross_valid:
@@ -220,12 +220,13 @@ class Solver(object):
             cnt = len(estimate_source)
             # apply a loss function after each layer
             with torch.autograd.set_detect_anomaly(True):
-                for c_idx, est_mask in enumerate(masks):
+                for c_idx, fmap in enumerate(masks):
                     coeff = ((c_idx + 1) * (1 / cnt))
                     # SI-SNR loss
                     # sisnr_loss, _, _, _ = cal_loss(
                     #     sources, est_src, lengths)
-                    temp_loss = danet_loss(mixture, sources, est_mask)
+                    # temp_loss = danet_loss(mixture, sources, est_mask)
+                    temp_loss = danet_loss(mixture, sources, fmap)
                     loss += (coeff * temp_loss)
                 loss /= len(masks)
 

@@ -77,7 +77,7 @@ def evaluate(args, model=None, data_loader=None, sr=None):
                 # Forward
                 with torch.no_grad():
                     mixture /= mixture.max()
-                    estimate = model(mixture)[-1]
+                    estimate = model(mixture)[0][-1]
 
                 if sources.size() != estimate.size():
                     print("WARNING: Wrong amount of speakers detected! choosing first to match size")

@@ -120,7 +120,7 @@ def separate(args, model=None, local_out_dir=None):
             mixture = mixture.to(args.device)
             lengths = lengths.to(args.device)
             # Forward
-            estimate_sources = model(mixture)[-1]
+            estimate_sources = model(mixture)[0][-1]
             # save wav files
             save_wavs(estimate_sources, mixture, lengths,
                       filenames, out_dir, sr=args.sample_rate)
