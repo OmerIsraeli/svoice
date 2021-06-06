@@ -220,13 +220,13 @@ class Solver(object):
             cnt = len(estimate_source)
             # apply a loss function after each layer
             with torch.autograd.set_detect_anomaly(True):
-                for c_idx, fmap in enumerate(feat_maps):
+                for c_idx, fmap in enumerate(masks):
                     coeff = ((c_idx + 1) * (1 / cnt))
                     # SI-SNR loss
                     # sisnr_loss, _, _, _ = cal_loss(
                     #     sources, est_src, lengths)
                     # temp_loss = danet_loss(mixture, sources, est_mask)
-                    temp_loss = danet_feature_loss(mixture, sources, fmap)
+                    temp_loss = danet_loss(mixture, sources, fmap)
                     loss += (coeff * temp_loss)
                 loss /= len(masks)
 
