@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from matplotlib import pyplot as plt
-from sklearn.cluster import KMeans, DBSCAN
+from sklearn.cluster import KMeans, DBSCAN, OPTICS
 from sklearn.manifold import TSNE
 from torch.autograd import Variable
 
@@ -21,6 +21,7 @@ from ..utils import capture_init
 from ..utils import overlap_and_add
 
 count = 0
+_SPEAKER_AMOUT = 3
 
 
 class MulCatBlock(nn.Module):
@@ -326,19 +327,28 @@ class SWave(nn.Module):
                 for i in range(emb_all.shape[0]):
                     # model = KElbowVisualizer(KMeans(), k=(2, 6))
                     # model.fit(emb_all[i].astype('float32'))
-                    model = DBSCAN(np.sqrt(self.C * 0.05), min_samples=int(0.1 * emb_all.shape[1]))
+                    model = OPTICS(min_samples=int(0.1 * emb_all.shape[1]))
 
                     model.fit(emb_all[i])
-                    emb_2d = TSNE().fit_transform(emb_all[i])
-                    # if np.unique(model.labels_) - 1 > 0:
-                    groups = pd.DataFrame(emb_2d, columns=['x', 'y']).assign(category=model.labels_).groupby(
-                        'category')
+                    elbow_ls.append(len(np.unique(model.labels_)))
+                spks = int(np.median(np.array(elbow_ls)))
+                if spks < _SPEAKER_AMOUT:
+                    spks = _SPEAKER_AMOUT
+                    print(f"Didnt find {_SPEAKER_AMOUT} speakers!")
+                print(spks, elbow_ls)
+
+                for i in range(emb_all.shape[0]):
+                    kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
 
                     global count
                     count += 1
 
                     if count % 100 == 1 or True:
                         fig, ax = plt.subplots()
+                        emb_2d = TSNE().fit_transform(emb_all[i])
+                        # if np.unique(model.labels_) - 1 > 0:
+                        groups = pd.DataFrame(emb_2d, columns=['x', 'y']).assign(category=kmeans_model.labels_).groupby(
+                            'category')
                         for name, points in groups:
                             ax.scatter(points.x, points.y, label=name)
                         ax.legend()
@@ -347,15 +357,6 @@ class SWave(nn.Module):
                             os.path.dirname(os.path.abspath(__file__)),
                             f"TSNE_clustering_C={self.C}_num={count}.png"))
 
-                    elbow_ls.append(len(np.unique(model.labels_)) - 1)
-                spks = int(np.median(np.array(elbow_ls)))
-                if spks <= 1:
-                    spks = 2
-                    print("Didnt find 2 speakers!")
-                print(spks, elbow_ls)
-
-                for i in range(emb_all.shape[0]):
-                    kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
                     print(spks)
                     att_list.append(kmeans_model.cluster_centers_)
 

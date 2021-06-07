@@ -1,14 +1,82 @@
 [
     [
-        "/media/alexey/hdd/code/svoice/dataset/debug/s2/1272-128104-0000_2035-147961-0014.wav",
-        31360
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0000_251-118436-0013_6319-64726-0003.wav",
+        65800
     ],
     [
-        "/media/alexey/hdd/code/svoice/dataset/debug/s2/1272-128104-0003_2035-147961-0016.wav",
-        26120
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0000_6345-93302-0018_2803-154328-0020.wav",
+        111360
     ],
     [
-        "/media/alexey/hdd/code/svoice/dataset/debug/s2/1272-128104-0003_2803-154320-0000.wav",
-        79200
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0000_8297-275154-0020_5694-64029-0008.wav",
+        46840
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0001_5338-284437-0005_5895-34622-0013.wav",
+        114600
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0002_2277-149874-0018_3853-163249-0041.wav",
+        99880
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0003_84-121550-0000_3536-23268-0001.wav",
+        127240
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0005_1919-142785-0025_2086-149220-0017.wav",
+        72080
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0005_6319-64726-0011_5536-43363-0013.wav",
+        72080
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0006_174-168635-0010_2078-142845-0020.wav",
+        80480
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0008_1673-143396-0010_3752-4944-0039.wav",
+        95960
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0011_3081-166546-0052_3000-15664-0044.wav",
+        120920
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0012_2428-83705-0022_8297-275154-0021.wav",
+        44200
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0012_2803-154320-0002_3752-4944-0032.wav",
+        43040
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-128104-0013_6241-61943-0006_5536-43359-0005.wav",
+        56800
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-135031-0000_6241-61943-0025_5895-34615-0012.wav",
+        87080
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-135031-0000_7850-73752-0006_652-129742-0001.wav",
+        87080
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-135031-0001_2035-152373-0007_7850-281318-0007.wav",
+        103520
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-135031-0001_6313-76958-0011_5536-43358-0003.wav",
+        89040
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-135031-0001_7976-110124-0022_8297-275156-0012.wav",
+        89040
+    ],
+    [
+        "/media/alexey/hdd/code/svoice/dataset/mix3/s2/1272-135031-0002_6241-61946-0016_2078-142845-0020.wav",
+        91800
     ]
 ]

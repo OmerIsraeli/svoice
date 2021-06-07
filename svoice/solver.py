@@ -16,7 +16,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau, StepLR
 
 from . import distrib
 from .evaluate import evaluate
-from .models.sisnr_loss import cal_loss, danet_feature_loss
+from .models.sisnr_loss import cal_loss, danet_feature_loss, mixed_loss
 from .separate import separate
 from .utils import bold, copy_state, pull_metric, serialize_model, swap_state, LogProgress
 from .IBMseparation import ibm_generator, weight_generator
@@ -30,7 +30,6 @@ except ImportError:
     ON_COLAB = False
 
 print("Colab status:", ON_COLAB)
-
 
 logger = logging.getLogger(__name__)
 
@@ -225,8 +224,8 @@ class Solver(object):
                     # SI-SNR loss
                     # sisnr_loss, _, _, _ = cal_loss(
                     #     sources, est_src, lengths)
-                    # temp_loss = danet_loss(mixture, sources, est_mask)
                     temp_loss = danet_loss(mixture, sources, fmap)
+                    # temp_loss = mixed_loss(mixture, sources, fmap, feat_maps[c_idx])
                     loss += (coeff * temp_loss)
                 loss /= len(masks)
 

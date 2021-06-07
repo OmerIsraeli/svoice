@@ -34,7 +34,7 @@ dummy:  # use this if you want twice the same exp, with a name
 
 # Evaluation stuff
 pesq: false # compute pesq?
-eval_every: 10
+eval_every: 20
 keep_last: 0
 
 # Optimization related

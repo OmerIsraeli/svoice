@@ -55,6 +55,30 @@ def danet_feature_loss(mixture, sources, feature_map):
     return loss
 
 
+def mixed_loss(mixture, sources, estimated_mask, feature_map):
+
+    mix = torch.tensor(mixture)
+    srcs = torch.tensor(sources)
+
+    loss = danet_loss(mix, sources, estimated_mask)
+
+    sources_ibm = [srcs[:, i, :] for i in range(sources.shape[1])]
+    ibm = ibm_generator(sources_ibm, mix)
+
+    features_by_mask = []
+    for msk in ibm:
+        features_by_mask.append(feature_map * msk[:, :, None])
+    features_by_mask = torch.stack(features_by_mask)
+    # features_by_mask = speakers, batch, time, features
+    centers_off_mass = torch.mean(features_by_mask, 2).permute(1, 0, 2)
+
+    for spk in range(features_by_mask.shape[0]):
+        distances = torch.cdist(centers_off_mass[:, [spk], :], features_by_mask[spk])
+        loss += torch.mean(torch.mean(distances, 2)[:, 0])
+
+    return loss
+
+
 def danet_loss(mixture, sources, estimated_mask):
     """
     MSE as the training objective. The mask estimation loss is calculated.
