@@ -21,7 +21,7 @@ from ..utils import capture_init
 from ..utils import overlap_and_add
 
 count = 0
-_SPEAKER_AMOUT = 3
+_SPEAKER_AMOUT = 2
 
 
 class MulCatBlock(nn.Module):
@@ -320,22 +320,24 @@ class SWave(nn.Module):
                 att_list = []
                 elbow_ls = []
 
-                rand_indices = np.random.choice(int(emb_all.shape[1]), int(0.1 * emb_all.shape[1]))
-
-                emb_all = emb_all[:, rand_indices, :]
-
-                for i in range(emb_all.shape[0]):
-                    # model = KElbowVisualizer(KMeans(), k=(2, 6))
-                    # model.fit(emb_all[i].astype('float32'))
-                    model = OPTICS(min_samples=int(0.1 * emb_all.shape[1]))
-
-                    model.fit(emb_all[i])
-                    elbow_ls.append(len(np.unique(model.labels_)))
-                spks = int(np.median(np.array(elbow_ls)))
-                if spks < _SPEAKER_AMOUT:
-                    spks = _SPEAKER_AMOUT
-                    print(f"Didnt find {_SPEAKER_AMOUT} speakers!")
-                print(spks, elbow_ls)
+                rand_indices = np.random.choice(int(emb_all.shape[1]), int(0.08 * emb_all.shape[1]))
+                emb_sliced = emb_all[:, rand_indices, :]
+                # emb_all = emb_all[:, rand_indices, :]
+                #
+                # for i in range(emb_all.shape[0]):
+                #     # model = KElbowVisualizer(KMeans(), k=(2, 6))
+                #     # model.fit(emb_all[i].astype('float32'))
+                #     model = OPTICS(min_samples=int(0.1 * emb_all.shape[1]))
+                #
+                #     model.fit(emb_all[i])
+                #     elbow_ls.append(len(np.unique(model.labels_)))
+                # spks = int(np.median(np.array(elbow_ls)))
+                # if spks < _SPEAKER_AMOUT:
+                #     spks = _SPEAKER_AMOUT
+                #     print(f"Didnt find {_SPEAKER_AMOUT} speakers!")
+                # print(spks, elbow_ls)
+                print(f"Assuming speaker amount is known and is {_SPEAKER_AMOUT}")
+                spks = _SPEAKER_AMOUT
 
                 for i in range(emb_all.shape[0]):
                     kmeans_model = KMeans(n_clusters=spks, random_state=0).fit(emb_all[i].astype('float32'))
@@ -345,10 +347,11 @@ class SWave(nn.Module):
 
                     if count % 100 == 1 or True:
                         fig, ax = plt.subplots()
-                        emb_2d = TSNE().fit_transform(emb_all[i])
+                        emb_2d = TSNE().fit_transform(emb_sliced[i])
                         # if np.unique(model.labels_) - 1 > 0:
-                        groups = pd.DataFrame(emb_2d, columns=['x', 'y']).assign(category=kmeans_model.labels_).groupby(
-                            'category')
+                        groups = pd.DataFrame(emb_2d, columns=['x', 'y']).assign(
+                            category=kmeans_model.predict(emb_sliced[i]))\
+                            .groupby('category')
                         for name, points in groups:
                             ax.scatter(points.x, points.y, label=name)
                         ax.legend()
